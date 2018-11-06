@@ -64,8 +64,9 @@
           <div class="card-body">
             <div class="table-responsive">
               <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
+                <thead class="text-center">
                   <tr>
+                    <th>Identificador</th>
                     <th>Nombre del Cultivo</th>
                     <th>Periódo de Cosecha</th>
                     <th>Operaciones</th>
@@ -75,7 +76,7 @@
                   {% for cultivo in cultivos %}
                   {% csrf_token %}
                     <tr id="{{cultivo.id_cultivo}}">
-                      
+                      <td class="text-center">{{cultivo.id_cultivo}}</td>
                       <td>{{ cultivo.nombre_cultivo }}</td>
                       <td>{{ cultivo.periodo_cosecha }}</td>
                       <td class="text-center">
@@ -93,5 +94,5 @@
         </div>
       </div>
     </div>
-  {% endblock modals %}      
+  {% endblock tables %}      
 {% endblock content %}

@@ -25,7 +25,7 @@
     <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <div id="page-top">
+    <div id="page-top" style="background-color: #fbfcff !important">
         {% block header %}
         {% endblock header %}
         <div id="wrapper">
@@ -34,9 +34,6 @@
             {% endblock sidebar %}
             {% block tables %}
             {% endblock tables %}
-            {% block script %}
-                
-            {% endblock script %}
             {% block modals %}
             {% endblock modals %}
         {% endblock content %}
@@ -55,7 +52,7 @@
                     body = null;
                     footer = "<button class='btn btn-primary' type='button' data-dismiss='modal'>Cancelar</button>"+
                     "<button id='confirmacion' class='btn btn-danger' href='#'>Editar</button>";
-                    enable();
+                    //enable();
                     cargarModal(nombre, header, body, footer);
                     ejecutarAJAX(id, url, type);
                     $('#detalleModal').modal('show');
@@ -138,12 +135,14 @@
                 switch(type){
                 case 'GET':
                     result.done(function(data){
+                      alert(data)
                       $('#visualizarModal').modal('show');
-                      $('#detalle').load(
-                          data.sensor
+                      load(
+                          data,
+                          '#detalle'
                       );
                     }).fail(function(data){
-                      alert(data.message)
+                      //alert(data.message)
                       console.log("error");
                     }).always(function(){
                       console.log("complete");
@@ -163,12 +162,12 @@
                     break;
                 case 'DELETE':
                     result.done(function() {
-                      alert("El sensor fue borrado exitosamente");
+                      alert("Se efectuó el borrado exitosamente");
                       $('#detalleModal').modal('hide');
                       $('#'+id).remove();
                     }).fail(function() {
                       console.log("error");
-                      alert("El sensor no pudo ser borrado");
+                      alert("El borrado no pudo ser ejecutado");
                       $('#detalleModal').modal('hide');
                     }).always(function() {
                       console.log("complete");
@@ -186,7 +185,11 @@
                     data: {
                     'id': id,
                     },
-                    success: function(){
+                    success: function(data){
+                        alert(data);
+                      $('#detalle').load(
+                        data.invernadero, '#detalle'
+                      );
                       console.log("SUCCES");
                     },
                     dataType: 'json'
@@ -232,6 +235,7 @@
                 <div id="modalBody" class="modal-body">
                   <form action="" method="POST" id="detalle">
                     {% csrf_token %}
+                    {{ data.form }}
                   </form>
                 </div>
                 <div id="modalFooter" class="modal-footer">

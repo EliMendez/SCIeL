@@ -66,6 +66,7 @@
               <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead class="text-center">
                   <tr>
+                    <th>Identificador</th>
                     <th>Nombre del Sensor</th>
                     <th>Dispositivo</th>
                     <th>Invernadero</th>
@@ -75,6 +76,7 @@
                 <tbody id="bodyTable">
                   {% for sensor in sensores %}          
                     <tr id="{{sensor.id_sensor}}">
+                      <td class="text-center">{{sensor.id_sensor}}</td>
                       <td>{{ sensor.nombre_sensor }}</td>
                       <td>{{ sensor.id_dispositivo }}</td>
                       <td>{{ sensor.id_invernadero }}</td>

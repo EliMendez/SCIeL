@@ -9,9 +9,9 @@ urlpatterns = [
         name='sign-in'
     ),
     path(
-        '',
-        views.InvernaderosListView.as_view(),
-        name='invernaderos'
+        'sign-out/',
+        views.SignOutView.as_view(),
+        name='sign-out'
     ),
     re_path(
         r'^monitorear/(?P<id_invernadero>[0-9]+)/',
@@ -22,6 +22,11 @@ urlpatterns = [
         'monitorear/',
         views.monitorear_invernadero,
         name = 'monitorear'
+    ),
+    path(
+        '',
+        views.InvernaderosListView.as_view(),
+        name='invernaderos'
     ),
     path(
         'cultivos/',
@@ -59,13 +64,28 @@ urlpatterns = [
         name='ajax-dispositivo'
     ),
     path(
+        'ajax/sensor/',
+        views.sensor,
+        name='ajax-sensor'
+    ),
+    path(
+        'ajax/actuador/',
+        views.actuador,
+        name='ajax-actuador'
+    ),
+    path(
+        'ajax/cultivo/',
+        views.cultivo,
+        name='ajax-cultivo'
+    ),
+    path(
+        'ajax/parametro/',
+        views.parametro,
+        name='ajax-parametro'
+    ),
+    path(
         'perfil/<slug:pk>/',
         views.PerfilUpdateView.as_view(),
         name='perfil'
-    ),
-    path(
-        'sign-out/',
-        views.SignOutView.as_view(),
-        name='sign-out'
     )
 ]

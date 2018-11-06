@@ -2,9 +2,9 @@
 {% block title %}SCIeL | Iniciar Sesión{% endblock %}
 {% block content %}
   {% load static from staticfiles  %}
-  <header class="py-2 bg-image-full mx-auto" style="background-image: url('/static/media/image/CE - UES 3.JPG'); background-size: cover;">
-    <div>
-      <div class="card card-login mx-auto bg-dark view overlay">
+  <header class="py-2 mx-auto" style="background-image: url('/static/media/image/CE - UES 3.JPG'); background-size: cover !important; width: 100% !important;">
+    <div style="align-content: center !important">
+      <div class="card card-login mx-auto bg-dark view overlay" >
         <div class="card-header text-center" style="color:whitesmoke !important;">
           <h3 class="h5">
             <img class="img-fluid d-block mx-auto mb-4" src="{% static 'media/image/logo2.png' %}" alt="" width="250" height="250" style="padding-top: 0.5rem; padding-bottom: 0.3rem;">
@@ -43,10 +43,11 @@
   </header>
 {% endblock content %}
 {% block footer %}
-<footer class="py-5 bg-dark" style="background-color: #343a40!important;">
-    <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; SCIeL 2018 | Sistema para el Control de Invernaderos en Línea</p>
-    </div>
-    <!-- /.container -->
-</footer>
+  <footer class="py-5" style="background-color: #212529">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <p class="h6 m-0 text-white bold">Copyright &copy; SCIeL 2018 | Sistema para el Control de Invernaderos en Línea</p>
+        </div>
+      </div>
+  </footer>
 {% endblock footer %}

@@ -250,7 +250,7 @@ def monitorear_invernadero(request, id_invernadero):
         return JsonResponse(data=context, safe=True)
 
 def editar_invernadero(request):
-    id_invernadero = request.GET['id_invernadero']
+    id_invernadero = request.GET['id']
     invernadero = get_object_or_404(Invernadero, id_invernadero=id_invernadero)
     if request.method == 'POST':
         form =InvernaderoForm(request.POST, instance=invernadero)
@@ -268,52 +268,30 @@ def editar_invernadero(request):
     else:
         form = InvernaderoForm(instance=invernadero)
     data = {
-        'form': form.as_p
+        'form': form
     }
-    return HttpResponse(data)
+    return HttpResponse(form)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
-def invernadero(request):
-    
+def invernadero(request):  
     if request.method == 'GET':
-
         id_invernadero = request.GET['id']
-
         invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
-
         invernadero_serializer = InvernaderoSerializer(invernadero, many=False)
-        
-        """dispositivo = Dispositivo.objects.filter(id_dispositivo=invernadero.id_dispositivo)
-        dispositivo_serializer = DispositivoSerializer(dispositivo, many=False)
-
-        cultivos = Cultivo.objects.filter(id_invernadero=dispositivo.id_invernadero).order_by('nombre_cultivo')
-        cultivos_serializer = SensorSerializer(cultivos, many=True)
-        
-        data = {
-            'invernadero': invernadero_serializer,
-            'dispositivo': dispositivo_serializer,
-            'cultivos': cultivos_serializer
-        }"""
         message = 'Los datos han sido desplegados'
         data = {
             'invernadero': invernadero_serializer.data,
             'message': message
         }
         return RFResponse(data=data)
-    
     elif request.method == 'PUT':
         id_invernadero = request.POST['id']
-
         invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
-
         invernadero_serializer = InvernaderoSerializer(invernadero, data=request.data['invernadero'])
-
         if invernadero_serializer.is_valid():
             result = invernadero_serializer.save()
-            
             message = None
-
             if result:
                 message = "El invernadero fue modificado exitosamente"
             else:
@@ -338,63 +316,34 @@ def invernadero(request):
             }, 
             status=status.HTTP_400_BAD_REQUEST
         )
-
     elif request.method == 'DELETE':
         id_invernadero = request.POST['id']
-
         invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
         invernadero.is_baja = True
         invernadero.save()
-        message = None
-        
-        if result:
-            message = "El invernadero fue borrado exitosamente"
-        else:
-            message = "El invernadero no pudo ser borrado"
+        message = "El invernadero fue borrado exitosamente"
         return RFResponse(data=message, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
 def dispositivo(request):
-    
     if request.method == 'GET':
-
         id_dispositivo = request.GET['id']
-
         dispositivo = Dispositivo.objects.get(id_dispositivo=id_dispositivo)
-
         dispositivo_serializer = DispositivoSerializer(dispositivo, many=False)
-        
-        """dispositivo = Dispositivo.objects.filter(id_dispositivo=dispositivo.id_dispositivo)
-        dispositivo_serializer = DispositivoSerializer(dispositivo, many=False)
-
-        cultivos = Cultivo.objects.filter(id_dispositivo=dispositivo.id_dispositivo).order_by('nombre_cultivo')
-        cultivos_serializer = SensorSerializer(cultivos, many=True)
-        
-        data = {
-            'dispositivo': dispositivo_serializer,
-            'dispositivo': dispositivo_serializer,
-            'cultivos': cultivos_serializer
-        }"""
         message = 'Los datos han sido desplegados'
         data = {
             'dispositivo': dispositivo_serializer.data,
             'message': message
         }
         return RFResponse(data=data)
-    
     elif request.method == 'PUT':
         id_dispositivo = request.POST['id']
-
         dispositivo = Dispositivo.objects.get(id_dispositivo=id_dispositivo)
-
         dispositivo_serializer = DispositivoSerializer(dispositivo, data=request.data['dispositivo'])
-
         if dispositivo_serializer.is_valid():
             result = dispositivo_serializer.save()
-            
             message = None
-
             if result:
                 message = "El dispositivo fue modificado exitosamente"
             else:
@@ -419,17 +368,219 @@ def dispositivo(request):
             }, 
             status=status.HTTP_400_BAD_REQUEST
         )
-
     elif request.method == 'DELETE':
         id_dispositivo = request.POST['id']
-
         dispositivo = Dispositivo.objects.get(id_dispositivo=id_dispositivo)
         dispositivo.is_baja = True
         dispositivo.save()
-        message = None
-        
-        if result:
-            message = "El dispositivo fue borrado exitosamente"
-        else:
-            message = "El dispositivo no pudo ser borrado"
-        return RFResponse(data={'errors': dispositivo_serializer.errors, 'message': message}, status=status.HTTP_204_NO_CONTENT)        
+        message = "El dispositivo fue borrado exitosamente"
+        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)        
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@login_required(login_url='/sign-in/')
+def sensor(request):
+    if request.method == 'GET':
+        id_sensor = request.GET['id']
+        sensor = Sensor.objects.get(id_sensor=id_sensor)
+        sensor_serializer = SensorSerializer(sensor, many=False)
+        message = 'Los datos han sido desplegados'
+        data = {
+            'sensor': sensor_serializer.data,
+            'message': message
+        }
+        return RFResponse(data=data)
+    elif request.method == 'PUT':
+        id_sensor = request.POST['id']
+        sensor = Sensor.objects.get(id_sensor=id_sensor)
+        sensor_serializer = SensorSerializer(sensor, data=request.data['sensor'])
+        if sensor_serializer.is_valid():
+            result = sensor_serializer.save()
+            message = None
+            if result:
+                message = "El sensor fue modificado exitosamente"
+            else:
+                message = "El sensor no pudo ser modificado"
+            data = {
+                'message': message
+            }
+            return RFResponse(
+                data={
+                    'sensor': sensor_serializer.data,
+                    'data':data
+                }
+            )
+        message = "El formulario no es válido"
+        data = {
+            'message': message
+        }
+        return RFResponsedata(
+            data={
+                'errors': sensor_serializer.errors,
+                'data': data
+            }, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    elif request.method == 'DELETE':
+        id_sensor = request.POST['id']
+        sensor = Sensor.objects.get(id_sensor=id_sensor)
+        sensor.is_baja = True
+        sensor.save()
+        message = "El sensor fue borrado exitosamente"
+        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@login_required(login_url='/sign-in/')
+def actuador(request):  
+    if request.method == 'GET':
+        id_actuador = request.GET['id']
+        actuador = Actuador.objects.get(id_actuador=id_actuador)
+        actuador_serializer = ActuadorSerializer(actuador, many=False)
+        message = 'Los datos han sido desplegados'
+        data = {
+            'actuador': actuador_serializer.data,
+            'message': message
+        }
+        return RFResponse(data=data)
+    elif request.method == 'PUT':
+        id_actuador = request.POST['id']
+        actuador = Actuador.objects.get(id_actuador=id_actuador)
+        actuador_serializer = ActuadorSerializer(actuador, data=request.data['actuador'])
+        if actuador_serializer.is_valid():
+            result = actuador_serializer.save()
+            message = None
+            if result:
+                message = "El actuador fue modificado exitosamente"
+            else:
+                message = "El actuador no pudo ser modificado"
+            data = {
+                'message': message
+            }
+            return RFResponse(
+                data={
+                    'actuador': actuador_serializer.data,
+                    'data':data
+                }
+            )
+        message = "El formulario no es válido"
+        data = {
+            'message': message
+        }
+        return RFResponsedata(
+            data={
+                'errors': actuador_serializer.errors,
+                'data': data
+            }, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    elif request.method == 'DELETE':
+        id_actuador = request.POST['id']
+        actuador = Actuador.objects.get(id_actuador=id_actuador)
+        actuador.is_baja = True
+        actuador.save()
+        message = "El actuador fue borrado exitosamente"
+        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@login_required(login_url='/sign-in/')
+def cultivo(request):
+    if request.method == 'GET':
+        id_cultivo = request.GET['id']
+        cultivo = Cultivo.objects.get(id_cultivo=id_cultivo)
+        cultivo_serializer = CultivoSerializer(cultivo, many=False)
+        message = 'Los datos han sido desplegados'
+        data = {
+            'cultivo': cultivo_serializer.data,
+            'message': message
+        }
+        return RFResponse(data=data)
+    
+    elif request.method == 'PUT':
+        id_cultivo = request.POST['id']
+        cultivo = Cultivo.objects.get(id_cultivo=id_cultivo)
+        cultivo_serializer = CultivoSerializer(cultivo, data=request.data['cultivo'])
+        if cultivo_serializer.is_valid():
+            result = cultivo_serializer.save()
+            message = None
+            if result:
+                message = "El cultivo fue modificado exitosamente"
+            else:
+                message = "El cultivo no pudo ser modificado"
+            data = {
+                'message': message
+            }
+            return RFResponse(
+                data={
+                    'cultivo': cultivo_serializer.data,
+                    'data':data
+                }
+            )
+        message = "El formulario no es válido"
+        data = {
+            'message': message
+        }
+        return RFResponsedata(
+            data={
+                'errors': cultivo_serializer.errors,
+                'data': data
+            }, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    elif request.method == 'DELETE':
+        id_cultivo = request.POST['id']
+        cultivo = Cultivo.objects.get(id_cultivo=id_cultivo)
+        cultivo.is_baja = True
+        cultivo.save()
+        message = "El cultivo fue borrado exitosamente"
+        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@login_required(login_url='/sign-in/')
+def parametro(request):   
+    if request.method == 'GET':
+        id_parametro = request.GET['id']
+        parametro = Parametro.objects.get(id_parametro=id_parametro)
+        parametro_serializer = ParametroSerializer(parametro, many=False)
+        message = 'Los datos han sido desplegados'
+        data = {
+            'parametro': parametro_serializer.data,
+            'message': message
+        }
+        return RFResponse(data=data)    
+    elif request.method == 'PUT':
+        id_parametro = request.POST['id']
+        parametro = Parametro.objects.get(id_parametro=id_parametro)
+        parametro_serializer = ParametroSerializer(parametro, data=request.data['parametro'])
+        if parametro_serializer.is_valid():
+            result = parametro_serializer.save()
+            message = None
+            if result:
+                message = "El parametro fue modificado exitosamente"
+            else:
+                message = "El parametro no pudo ser modificado"
+            data = {
+                'message': message
+            }
+            return RFResponse(
+                data={
+                    'parametro': parametro_serializer.data,
+                    'data':data
+                }
+            )
+        message = "El formulario no es válido"
+        data = {
+            'message': message
+        }
+        return RFResponsedata(
+            data={
+                'errors': parametro_serializer.errors,
+                'data': data
+            }, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    elif request.method == 'DELETE':
+        id_parametro = request.POST['id']
+        parametro = Parametro.objects.get(id_parametro=id_parametro)
+        parametro.is_baja = True
+        parametro.save()
+        message = "El parametro fue borrado exitosamente"
+        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)

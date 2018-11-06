@@ -56,15 +56,18 @@
             <li class="breadcrumb-item active">Datos</li>
           </ol>
           <!-- DataTables Example -->
+          <div class="alert bold alert-success"><strong>Seleccione un invernadero para monitorear su estado</strong></div>
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-table"></i>
-              Invernaderos</div>
+              Invernaderos
+            </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
+                  <thead class="text-center">
                     <tr>
+                      <th>Identificador</th>
                       <th>Nombre del Invernadero</th>
                       <th>Ubicacion</th>
                       <th>Operaciones</th>
@@ -74,7 +77,7 @@
                     {% for invernadero in invernaderos %}
                       {% csrf_token %}
                       <tr id="{{invernadero.id_invernadero}}">
-                        
+                        <td class="text-center">{{invernadero.id_invernadero}}</td>
                         <td><a href="monitorear/{{ invernadero.id_invernadero }}">{{ invernadero.nombre_invernadero }}</a></td>
                         <td>{{ invernadero.ubicacion }}</td>
                         <td class="text-center">

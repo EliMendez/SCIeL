@@ -3,42 +3,49 @@
 {% endblock %}
 
 {% block header %}
-<nav class="navbar navbar-expand static-top" style="background-color: #212529 !important">
-
-        <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
-          <i>
-            {% load staticfiles %}
-            <img class="image-circle" style="max-width:120px; margin-top: -7px;" src="{% static 'media/image/logo2.png' %}">
-          </i>
-        </button>
-
-        {% if user.is_authenticated %}
-          <!-- Navbar -->
-          <ul class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 navbar-nav text-white">
-            <li class="nav-item dropdown no-arrow">
-              <a class="bold nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #f8f9fa !important">
-                {% if user.first_name %}
-                  <i>{{ user.first_name }} {{ user.last_name }} <span class="fas fa-user-circle fa-fw"></span></i>
-                {% else %}
-                  <i>{{ user.username }} <span class="fas fa-user-circle fa-fw"></span></i>
-                {% endif %}
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="perfil/{{user.id}}">Perfil</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Salir</a>
-              </div>
-            </li>
-        </ul>
-        {% endif %}
-      </nav>
-  {% endblock header%}
-
-  {% block content %}
-    {% block sidebar %}
-    {% endblock sidebar %}
-  
-    {% block tables %}
-    {% endblock tables %}
-
-  {% endblock content %}
+  <header>
+    <nav class="navbar navbar-expand static-top" style="background-color: #212529">
+    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+      <i>
+        {% load staticfiles %}
+        <img class="image-circle" style="max-width:120px; margin-top: -7px;" src="{% static 'media/image/logo2.png' %}">
+      </i>
+      <i class="fas fa-bars" style="margin-left: 10%;"></i>
+    </button>
+    {% if user.is_authenticated %}
+    <!-- Navbar -->
+    <ul class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 navbar-nav text-white">
+      <li class="nav-item dropdown no-arrow bold h5">
+        <a class="bold nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #f8f9fa !important">
+          {% if user.first_name %}
+            <i>{{ user.first_name }} {{ user.last_name }} <span class="fas fa-user-circle fa-fw"></span></i>
+          {% else %}
+            <i>{{ user.username }} <span class="fas fa-user-circle fa-fw"></span></i>
+          {% endif %}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+          <a class="dropdown-item" href="perfil/{{user.id}}">Perfil</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Salir</a>
+        </div>
+      </li>
+    </ul>
+    {% endif %}
+  </nav>
+  </header>
+{% endblock header%}
+{% block content %}
+  {% block sidebar %}
+  {% endblock sidebar %}
+  {% block tables %}
+  {% endblock tables %}
+{% endblock content %}
+{% block footer %}
+  <footer class="sticky-footer bg-light" style="background-color: #ecedf1 !important; border-top: 1px solid #d2d6de">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <p class="h6 m-0 text-black bold">Copyright &copy; SCIeL 2018 | Sistema para el Control de Invernaderos en Línea</p>
+        </div>
+      </div>
+  </footer>
+{% endblock footer %}
