@@ -1,7 +1,3 @@
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response as RFResponse
-
 from django.views.generic import CreateView, TemplateView 
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.detail import DetailView
@@ -9,8 +5,8 @@ from django.views.generic.list import ListView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms.models import model_to_dict
 from django.template import loader
-from django.urls import reverse_lazy
-from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse_lazy, reverse
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -21,7 +17,6 @@ from django.utils import timezone
 
 from .forms import LoginForm, UserUpdateForm, InvernaderoForm
 from .models import *
-from .serializer import *
 
 import json
 
@@ -183,63 +178,280 @@ class ActuadoresListView(LoginRequiredMixin, ListView):
         context = super(ActuadoresListView, self).get_context_data(**kwargs)
         return context
 
+
+class InvernaderoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Invernadero
+    template_name = 'invernaderos/editForm.html'
+    fields = [
+        'id_invernadero',
+        'id_dispositivo',
+        'id_usuario',
+        'id_cultivo',
+        'nombre_invernadero',
+        'ubicacion'
+    ]
+
+
+class ParametroUpdateView(LoginRequiredMixin, UpdateView):
+    model = Parametro
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_parametro',
+        'id_invernadero',
+        'nombre_parametro',
+        'magnitud_referencia'
+    )
+
+
+class ActuadorUpdateView(LoginRequiredMixin, UpdateView):
+    model = Actuador
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_actuador',
+        'id_dispositivo',
+        'id_invernadero',
+        'nombre_actuador'
+    )
+
+
+class SensorUpdateView(LoginRequiredMixin, UpdateView):
+    model = Sensor
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_sensor',
+        'id_dispositivo',
+        'id_invernadero',
+        'nombre_sensor'
+    )
+
+
+class DispositivoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Dispositivo
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_dispositivo',
+        'nombre_dispositivo'
+    )
+
+
+class CultivoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Cultivo
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_cultivo',
+        'nombre_cultivo',
+        'periodo_cosecha'
+    )
+
+
+class InvernaderoDetailView(LoginRequiredMixin, DetailView):
+    model = Invernadero
+    template_name = 'invernaderos/viewForm.html'
+    fields = [
+        'id_invernadero',
+        'id_dispositivo',
+        'id_usuario',
+        'id_cultivo',
+        'nombre_invernadero',
+        'ubicacion'
+    ]
+    context_object_name = 'invernadero'
+
+    def get_context_data(self, **kwargs):
+        caso = 'INVERNADERO'
+        context = {
+            'invernadero': super().get_context_data(**kwargs),
+            'caso': caso
+        }
+        return context
+
+
+class ParametroDetailView(LoginRequiredMixin, DetailView):
+    model = Parametro
+    template_name = 'invernaderos/viewForm.html'
+    fields = (
+        'id_parametro',
+        'id_invernadero',
+        'nombre_parametro',
+        'magnitud_referencia'
+    )
+
+
+class ActuadorDetailView(LoginRequiredMixin, DetailView):
+    model = Actuador
+    template_name = 'invernaderos/viewForm.html'
+    fields = (
+        'id_actuador',
+        'id_dispositivo',
+        'id_invernadero',
+        'nombre_actuador'
+    )
+
+
+class SensorDetailView(LoginRequiredMixin, DetailView):
+    model = Sensor
+    template_name = 'invernaderos/viewForm.html'
+    fields = (
+        'id_sensor',
+        'id_dispositivo',
+        'id_invernadero',
+        'nombre_sensor'
+    )
+
+
+class DispositivoDetailView(LoginRequiredMixin, DetailView):
+    model = Dispositivo
+    template_name = 'invernaderos/viewForm.html'
+    fields = (
+        'id_dispositivo',
+        'nombre_dispositivo'
+    )
+
+
+class CultivoDetailView(LoginRequiredMixin, DetailView):
+    model = Cultivo
+    template_name = 'invernaderos/viewForm.html'
+    fields = (
+        'id_cultivo',
+        'nombre_cultivo',
+        'periodo_cosecha'
+    )
+
+
+class InvernaderoCreateView(LoginRequiredMixin, CreateView):
+    model = Invernadero
+    success_url = reverse('invernaderos')
+    template_name = 'invernaderos/editForm.html'
+    fields = [
+        'id_dispositivo',
+        'id_cultivo',
+        'nombre_invernadero',
+        'ubicacion'
+    ]
+    
+    def form_valid(self, form):
+        invernadero = form.save()
+        user = self.request.user
+        invernadero.id_usuario = user
+        invernadero.save()
+        return redirect(success_url)
+
+    
+
+
+class ParametroCreateView(LoginRequiredMixin, CreateView):
+    model = Parametro
+    success_url = '/parametro/'
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_invernadero',
+        'nombre_parametro',
+        'magnitud_referencia'
+    )
+
+
+class ActuadorCreateView(LoginRequiredMixin, CreateView):
+    model = Actuador
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_dispositivo',
+        'id_invernadero',
+        'nombre_actuador'
+    )
+
+
+class SensorCreateView(LoginRequiredMixin, CreateView):
+    model = Sensor
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'id_dispositivo',
+        'id_invernadero',
+        'nombre_sensor'
+    )
+
+
+class DispositivoCreateView(LoginRequiredMixin, CreateView):
+    model = Dispositivo
+    success_url = '/dispositivo/'
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'nombre_dispositivo'
+    )
+
+
+class CultivoCreateView(LoginRequiredMixin, CreateView):
+    model = Cultivo
+    success_url = '/cultivos/'
+    template_name = 'invernaderos/editForm.html'
+    fields = (
+        'nombre_cultivo',
+        'periodo_cosecha'
+    )
+
+
 @login_required()
 def monitorear_invernadero(request, id_invernadero):
     if request.method == 'GET':
-        user = request.user
-        invernaderos = Invernadero.objects.all().filter(id_usuario=user.id).filter(is_baja=False)
-        cant_invernaderos = invernaderos.count()
+        data = Invernadero.objects.filter(id_invernadero=id_invernadero).filter(is_baja=False).exists()
+        if data:
+            user = request.user
+            invernaderos = Invernadero.objects.all().filter(id_usuario=user.id).filter(is_baja=False)
+            cant_invernaderos = invernaderos.count()
 
-        datos = []
-        dispositivos = Dispositivo.objects.all().filter(is_baja=False)
-        for invernadero in invernaderos:
-            if invernadero.id_dispositivo in dispositivos:
-                if not invernadero.id_dispositivo in datos:
-                    datos.append(invernadero.id_dispositivo)
-        cant_dispositivos = len(datos)
-        
-        actuadores = Actuador.objects.all().filter(is_baja=False)
-        datos = []
-        for invernadero in invernaderos:
-            result = actuadores.filter(id_invernadero=invernadero.id_invernadero)
-            for actuador in result:
-                datos.append(actuador)
-        cant_actuadores = len(datos)
-
-        sensores = Sensor.objects.all().filter(is_baja=False)
-        datos = []
-        for invernadero in invernaderos:
-            result = sensores.filter(id_invernadero=invernadero.id_invernadero)
-            for sensor in result:
-                datos.append(sensor)
-        cant_sensores = len(datos)
-
-        parametros = Parametro.objects.all().filter(is_baja=False)
-        for invernadero in invernaderos:
-            result = parametros.filter(id_invernadero=invernadero.id_invernadero)
-            for parametro in result:
-                datos.append(parametro)
-        cant_parametros = len(datos)
+            datos = []
+            dispositivos = Dispositivo.objects.all().filter(is_baja=False)
+            for invernadero in invernaderos:
+                if invernadero.id_dispositivo in dispositivos:
+                    if not invernadero.id_dispositivo in datos:
+                        datos.append(invernadero.id_dispositivo)
+            cant_dispositivos = len(datos)
             
-        cant_cultivos = Cultivo.objects.all().filter(id_usuario=user.id).filter(is_baja=False).count()
+            actuadores = Actuador.objects.all().filter(is_baja=False)
+            datos = []
+            for invernadero in invernaderos:
+                result = actuadores.filter(id_invernadero=invernadero.id_invernadero)
+                for actuador in result:
+                    datos.append(actuador)
+            cant_actuadores = len(datos)
 
-        mediciones = Medicion.objects.all().filter(id_invernadero=id_invernadero)[:20]
-        fecha = timezone.now()
+            sensores = Sensor.objects.all().filter(is_baja=False)
+            datos = []
+            for invernadero in invernaderos:
+                result = sensores.filter(id_invernadero=invernadero.id_invernadero)
+                for sensor in result:
+                    datos.append(sensor)
+            cant_sensores = len(datos)
+
+            parametros = Parametro.objects.all().filter(is_baja=False)
+            for invernadero in invernaderos:
+                result = parametros.filter(id_invernadero=invernadero.id_invernadero)
+                for parametro in result:
+                    datos.append(parametro)
+            cant_parametros = len(datos)
+                
+            cant_cultivos = Cultivo.objects.all().filter(id_usuario=user.id).filter(is_baja=False).count()
+
+            mediciones = Medicion.objects.all().filter(id_invernadero=id_invernadero)[:20]
+            fecha = timezone.now()
+                
+            context = {
+                'cant_cultivos': cant_cultivos,
+                'cant_parametros': cant_parametros,
+                'cant_sensores': cant_sensores,
+                'cant_actuadores': cant_actuadores,
+                'cant_dispositivos': cant_dispositivos,
+                'cant_invernaderos': cant_invernaderos,
+                'mediciones': mediciones,
+                'fecha': fecha
+            }
+
+            temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
+            #temp = loader.get_template('404.html')
             
-        context = {
-            'cant_cultivos': cant_cultivos,
-            'cant_parametros': cant_parametros,
-            'cant_sensores': cant_sensores,
-            'cant_actuadores': cant_actuadores,
-            'cant_dispositivos': cant_dispositivos,
-            'cant_invernaderos': cant_invernaderos,
-            'mediciones': mediciones,
-            'fecha': fecha
-        }
-
-        temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
-        
-        return HttpResponse(temp.render(context, request))
+            return HttpResponse(temp.render({}, request))
+        else:
+            temp = loader.get_template('404.html')
+            return HttpResponse(temp.render({}, request))
     elif request.method == 'RELOAD':
         mediciones = Medicion.objects.all().filter(id_invernadero=id_invernadero)[:20]
         fecha = timezone.now()
@@ -264,7 +476,7 @@ def editar_invernadero(request):
         data = {
                 'message': message
             }
-        return JsonResponse(data)
+        return RFResponse(data)
     else:
         form = InvernaderoForm(instance=invernadero)
     data = {
@@ -272,51 +484,9 @@ def editar_invernadero(request):
     }
     return HttpResponse(form)
 
-@api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
 def invernadero(request):  
-    if request.method == 'GET':
-        id_invernadero = request.GET['id']
-        invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
-        invernadero_serializer = InvernaderoSerializer(invernadero, many=False)
-        message = 'Los datos han sido desplegados'
-        data = {
-            'invernadero': invernadero_serializer.data,
-            'message': message
-        }
-        return RFResponse(data=data)
-    elif request.method == 'PUT':
-        id_invernadero = request.POST['id']
-        invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
-        invernadero_serializer = InvernaderoSerializer(invernadero, data=request.data['invernadero'])
-        if invernadero_serializer.is_valid():
-            result = invernadero_serializer.save()
-            message = None
-            if result:
-                message = "El invernadero fue modificado exitosamente"
-            else:
-                message = "El invernadero no pudo ser modificado"
-            data = {
-                'message': message
-            }
-            return RFResponse(
-                data={
-                    'invernadero': invernadero_serializer.data,
-                    'data':data
-                }
-            )
-        message = "El formulario no es válido"
-        data = {
-            'message': message
-        }
-        return RFResponsedata(
-            data={
-                'errors': invernadero_serializer.errors,
-                'data': data
-            }, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         id_invernadero = request.POST['id']
         invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
         invernadero.is_baja = True
@@ -324,51 +494,9 @@ def invernadero(request):
         message = "El invernadero fue borrado exitosamente"
         return RFResponse(data=message, status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
 def dispositivo(request):
-    if request.method == 'GET':
-        id_dispositivo = request.GET['id']
-        dispositivo = Dispositivo.objects.get(id_dispositivo=id_dispositivo)
-        dispositivo_serializer = DispositivoSerializer(dispositivo, many=False)
-        message = 'Los datos han sido desplegados'
-        data = {
-            'dispositivo': dispositivo_serializer.data,
-            'message': message
-        }
-        return RFResponse(data=data)
-    elif request.method == 'PUT':
-        id_dispositivo = request.POST['id']
-        dispositivo = Dispositivo.objects.get(id_dispositivo=id_dispositivo)
-        dispositivo_serializer = DispositivoSerializer(dispositivo, data=request.data['dispositivo'])
-        if dispositivo_serializer.is_valid():
-            result = dispositivo_serializer.save()
-            message = None
-            if result:
-                message = "El dispositivo fue modificado exitosamente"
-            else:
-                message = "El dispositivo no pudo ser modificado"
-            data = {
-                'message': message
-            }
-            return RFResponse(
-                data={
-                    'dispositivo': dispositivo_serializer.data,
-                    'data':data
-                }
-            )
-        message = "El formulario no es válido"
-        data = {
-            'message': message
-        }
-        return RFResponsedata(
-            data={
-                'errors': dispositivo_serializer.errors,
-                'data': data
-            }, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         id_dispositivo = request.POST['id']
         dispositivo = Dispositivo.objects.get(id_dispositivo=id_dispositivo)
         dispositivo.is_baja = True
@@ -376,51 +504,9 @@ def dispositivo(request):
         message = "El dispositivo fue borrado exitosamente"
         return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)        
 
-@api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
 def sensor(request):
-    if request.method == 'GET':
-        id_sensor = request.GET['id']
-        sensor = Sensor.objects.get(id_sensor=id_sensor)
-        sensor_serializer = SensorSerializer(sensor, many=False)
-        message = 'Los datos han sido desplegados'
-        data = {
-            'sensor': sensor_serializer.data,
-            'message': message
-        }
-        return RFResponse(data=data)
-    elif request.method == 'PUT':
-        id_sensor = request.POST['id']
-        sensor = Sensor.objects.get(id_sensor=id_sensor)
-        sensor_serializer = SensorSerializer(sensor, data=request.data['sensor'])
-        if sensor_serializer.is_valid():
-            result = sensor_serializer.save()
-            message = None
-            if result:
-                message = "El sensor fue modificado exitosamente"
-            else:
-                message = "El sensor no pudo ser modificado"
-            data = {
-                'message': message
-            }
-            return RFResponse(
-                data={
-                    'sensor': sensor_serializer.data,
-                    'data':data
-                }
-            )
-        message = "El formulario no es válido"
-        data = {
-            'message': message
-        }
-        return RFResponsedata(
-            data={
-                'errors': sensor_serializer.errors,
-                'data': data
-            }, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         id_sensor = request.POST['id']
         sensor = Sensor.objects.get(id_sensor=id_sensor)
         sensor.is_baja = True
@@ -428,51 +514,9 @@ def sensor(request):
         message = "El sensor fue borrado exitosamente"
         return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
 def actuador(request):  
-    if request.method == 'GET':
-        id_actuador = request.GET['id']
-        actuador = Actuador.objects.get(id_actuador=id_actuador)
-        actuador_serializer = ActuadorSerializer(actuador, many=False)
-        message = 'Los datos han sido desplegados'
-        data = {
-            'actuador': actuador_serializer.data,
-            'message': message
-        }
-        return RFResponse(data=data)
-    elif request.method == 'PUT':
-        id_actuador = request.POST['id']
-        actuador = Actuador.objects.get(id_actuador=id_actuador)
-        actuador_serializer = ActuadorSerializer(actuador, data=request.data['actuador'])
-        if actuador_serializer.is_valid():
-            result = actuador_serializer.save()
-            message = None
-            if result:
-                message = "El actuador fue modificado exitosamente"
-            else:
-                message = "El actuador no pudo ser modificado"
-            data = {
-                'message': message
-            }
-            return RFResponse(
-                data={
-                    'actuador': actuador_serializer.data,
-                    'data':data
-                }
-            )
-        message = "El formulario no es válido"
-        data = {
-            'message': message
-        }
-        return RFResponsedata(
-            data={
-                'errors': actuador_serializer.errors,
-                'data': data
-            }, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         id_actuador = request.POST['id']
         actuador = Actuador.objects.get(id_actuador=id_actuador)
         actuador.is_baja = True
@@ -480,52 +524,9 @@ def actuador(request):
         message = "El actuador fue borrado exitosamente"
         return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
 def cultivo(request):
-    if request.method == 'GET':
-        id_cultivo = request.GET['id']
-        cultivo = Cultivo.objects.get(id_cultivo=id_cultivo)
-        cultivo_serializer = CultivoSerializer(cultivo, many=False)
-        message = 'Los datos han sido desplegados'
-        data = {
-            'cultivo': cultivo_serializer.data,
-            'message': message
-        }
-        return RFResponse(data=data)
-    
-    elif request.method == 'PUT':
-        id_cultivo = request.POST['id']
-        cultivo = Cultivo.objects.get(id_cultivo=id_cultivo)
-        cultivo_serializer = CultivoSerializer(cultivo, data=request.data['cultivo'])
-        if cultivo_serializer.is_valid():
-            result = cultivo_serializer.save()
-            message = None
-            if result:
-                message = "El cultivo fue modificado exitosamente"
-            else:
-                message = "El cultivo no pudo ser modificado"
-            data = {
-                'message': message
-            }
-            return RFResponse(
-                data={
-                    'cultivo': cultivo_serializer.data,
-                    'data':data
-                }
-            )
-        message = "El formulario no es válido"
-        data = {
-            'message': message
-        }
-        return RFResponsedata(
-            data={
-                'errors': cultivo_serializer.errors,
-                'data': data
-            }, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         id_cultivo = request.POST['id']
         cultivo = Cultivo.objects.get(id_cultivo=id_cultivo)
         cultivo.is_baja = True
@@ -533,51 +534,9 @@ def cultivo(request):
         message = "El cultivo fue borrado exitosamente"
         return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET', 'PUT', 'DELETE'])
 @login_required(login_url='/sign-in/')
 def parametro(request):   
-    if request.method == 'GET':
-        id_parametro = request.GET['id']
-        parametro = Parametro.objects.get(id_parametro=id_parametro)
-        parametro_serializer = ParametroSerializer(parametro, many=False)
-        message = 'Los datos han sido desplegados'
-        data = {
-            'parametro': parametro_serializer.data,
-            'message': message
-        }
-        return RFResponse(data=data)    
-    elif request.method == 'PUT':
-        id_parametro = request.POST['id']
-        parametro = Parametro.objects.get(id_parametro=id_parametro)
-        parametro_serializer = ParametroSerializer(parametro, data=request.data['parametro'])
-        if parametro_serializer.is_valid():
-            result = parametro_serializer.save()
-            message = None
-            if result:
-                message = "El parametro fue modificado exitosamente"
-            else:
-                message = "El parametro no pudo ser modificado"
-            data = {
-                'message': message
-            }
-            return RFResponse(
-                data={
-                    'parametro': parametro_serializer.data,
-                    'data':data
-                }
-            )
-        message = "El formulario no es válido"
-        data = {
-            'message': message
-        }
-        return RFResponsedata(
-            data={
-                'errors': parametro_serializer.errors,
-                'data': data
-            }, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         id_parametro = request.POST['id']
         parametro = Parametro.objects.get(id_parametro=id_parametro)
         parametro.is_baja = True

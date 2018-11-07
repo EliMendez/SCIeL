@@ -56,7 +56,15 @@
             <li class="breadcrumb-item active">Datos</li>
           </ol>
           <!-- DataTables Example -->
-          <div class="alert bold alert-success"><strong>Seleccione un invernadero para monitorear su estado</strong></div>
+          <div class="alert bold alert-success">
+            <strong>Seleccione un invernadero para monitorear su estado</strong>
+          </div>
+          <div class="alert bold alert-info">
+            <i class="fas fw fa-plus-circle"></i>
+            <a href="{% url 'invernaderos:invernadero-crear' %}">
+              <strong>¡Click Aquí para crear un nuevo invernadero!</strong>
+            </a>
+            </div>
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-table"></i>
@@ -81,10 +89,9 @@
                         <td><a href="monitorear/{{ invernadero.id_invernadero }}">{{ invernadero.nombre_invernadero }}</a></td>
                         <td>{{ invernadero.ubicacion }}</td>
                         <td class="text-center">
-                          {% csrf_token %}
-                          <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ invernadero.id_invernadero }}, '{{invernadero.nombre_invernadero}}', '/ajax/invernadero/', 'GET', 'INVERNADERO');" style="color:gray !important"></a>
-                          <a class="fas fa-w fa-edit" name="editar" href="#" data-toggle="modal" onclick="operacion({{ invernadero.id_invernadero }}, '{{invernadero.nombre_invernadero}}', '/ajax/invernadero/', 'LOAD', 'INVERNADERO');" style="color:gray !important"></a>
-                          <a class="fas fa-w fa fa-trash" name="eliminar" href="#" data-toggle="modal" onclick="operacion({{ invernadero.id_invernadero }}, '{{invernadero.nombre_invernadero}}', '/ajax/invernadero/', 'DELETE', 'INVERNADERO');" style="color:gray !important"></a>
+                          <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="redirectView('INVERNADERO', {{ invernadero.id_invernadero }})" style="color:gray !important"></a>
+                          <a class="fas fa-w fa-edit" name="editar" href="#" onclick="redirectEdit('INVERNADERO', {{ invernadero.id_invernadero }})" style="color:gray !important"></a>
+                          <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="operacion({{ invernadero.id_invernadero }}, '{{invernadero.nombre_invernadero}}', 'INVERNADERO');" style="color:gray !important"></a>
                         </td>                          
                       </tr>
                     {% endfor %}

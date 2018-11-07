@@ -436,7 +436,7 @@ class Medicion(models.Model):
         self.save()
 
     def __str__(self):
-        return str(self.fecha_medicion)
+        return str(self.fecha_medicion) 
 
     class Meta:
         ordering = ["id_invernadero", "fecha_medicion", "id_sensor", "id_parametro", "id_actuador"]

@@ -81,10 +81,9 @@
                       <td>{{ sensor.id_dispositivo }}</td>
                       <td>{{ sensor.id_invernadero }}</td>
                       <td class="text-center">
-                        {% csrf_token %}
-                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ sensor.id_sensor }}, '{{sensor.nombre_sensor}}', '/ajax/sensor/', 'GET', 'SENSOR');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa-edit" name="editar" href="#" data-toggle="modal" onclick="operacion({{ sensor.id_sensor }}, '{{sensor.nombre_sensor}}', '/ajax/sensor/', 'LOAD', 'SENSOR');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" data-toggle="modal" onclick="operacion({{ sensor.id_sensor }}, '{{sensor.nombre_sensor}}', '/ajax/sensor/', 'DELETE', 'SENSOR');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ sensor.id_sensor }}, '{{sensor.nombre_sensor}}', 'SENSORR');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="{% url 'invernaderos:sensor-detalle' %}" data-toggle="modal" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="{% url 'invernaderos:sensor-edicion' %}" data-toggle="modal" style="color:gray !important"></a>
                       </td>                          
                     </tr>
                   {% endfor %}  

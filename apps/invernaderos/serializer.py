@@ -30,6 +30,7 @@ class InvernaderoSerializer(serializers.ModelSerializer):
         fields = (
             'id_invernadero',
             'id_dispositivo',
+            'id_usuario',
             'id_cultivo',
             'nombre_invernadero',
             'ubicacion'
@@ -46,6 +47,7 @@ class ParametroSerializer(serializers.ModelSerializer):
             'nombre_parametro',
             'magnitud_referencia'
         )
+
 
 class ActuadorSerializer(serializers.ModelSerializer):
 

@@ -7,9 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-        
     <title>{% block title %}{% endblock %}</title>
-    
     {% load staticfiles %}    
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'media/image/favicon2.ico' %}">
     <!-- Bootstrap core CSS-->
@@ -41,78 +39,80 @@
         {% block footer %}
         {% endblock footer %}
         <script>
-            function redirect(url){
-                location.href=url
+            function redirectEdit(caso, id){
+                switch(caso){
+                    case 'INVERNADERO':
+                        location.href = '/edicion/invernadero/'+id;
+                        break;
+                    case 'SENSOR':
+                        location.href = '/edicion/sensor/'+id;
+                        break;
+                    case 'ACTUADOR':
+                        location.href = '/edicion/actuador/'+id;
+                        break;
+                    case 'DISPOSITIVO':
+                        location.href = '/edicion/dispositivo/'+id;
+                        break;
+                    case 'CULTIVO':
+                        location.href = '/edicion/cultivo/'+id;
+                        break;
+                    case 'PARAMETRO':
+                        location.href = '/edicion/parametro/'+id;
+                        break;
+                }
             };
-            function operacion(id, nombre, url, type, caso){       
-                console.log("OPERACION: "+type);
-                switch(type){
-                case 'GET':
-                    header = "Visualizar "+caso+": ";
-                    body = null;
-                    footer = "<button class='btn btn-primary' type='button' data-dismiss='modal'>Cancelar</button>"+
-                    "<button id='confirmacion' class='btn btn-danger' href='#'>Editar</button>";
-                    //enable();
-                    cargarModal(nombre, header, body, footer);
-                    ejecutarAJAX(id, url, type);
-                    $('#detalleModal').modal('show');
-                    header = "Editar "+caso+": ";
-                    body = $('#detalle').contents();
-                    footer = "<button class='btn btn-primary' type='button' data-dismiss='modal'>Cancelar</button>"+
-                    "<button id='confirmacion' class='btn btn-danger' href='#'>Guardar</button>";
-                    $('#confirmacion').attr('onclick', 'enable()');
-                    $('#detalleModal').modal('hide');
-                    cargarModal(nombre, header, body, footer);
-                    $('#detalleModal').modal('show');
-                    $('#confirmacion').attr('onclick', 'confirmarAccion('+nombre+', '+header+', '+body+', '+footer+')')
-                    $('#detalleModal').modal('hide');
-                    $('#confirmacion').attr('onclick', 'ejecutarAJAX('+id+',\''+url+'\',\'PUT\')');
-                    $('#detalleModal').modal('hide');
-                    break;
-                case 'LOAD':
-                    header = "Guardar "+caso+": ";
-                    body = null;
-                    footer = "<button class='btn btn-primary' type='button' data-dismiss='modal'>Cancelar</button>"+
-                    "<button id='confirmacion' class='btn btn-danger' href='#'>Guardar</button>";
-                    enable();
-                    cargarModal(nombre, header, body, footer);
-                    ejecutarAJAX(id, nombre, url, 'GET');
-                    $('#detalleModal').modal('show');
-                    $('#confirmacion').attr('onclick', 'confirmarAccion('+nombre+', '+header+', '+body+', '+footer+')')
-                    $('#detalleModal').modal('hide');
-                    $('#confirmacion').attr('onclick', 'ejecutarAJAX('+id+',\''+url+'\',\'PUT\')');
-                    $('#detalleModal').modal('hide');
-                    break;
-                case 'DELETE':
-                    header = "Eliminar "+caso+": ";
-                    body = "<p>¿Seguro que desea eliminar el "+caso+" <strong>"+nombre+"</strong>?</p>"+
-                    "<p>Seleccione 'Continuar' para confirmar la acción</p>";
-                    footer = "<button class='btn btn-primary' type='button' data-dismiss='modal'>Cancelar</button>"+
-                    "<button id='confirmacion' class='btn btn-danger' href='#'>Continuar</button>";
-                    confirmarAccion(nombre, header, body, footer);
-                    $('#confirmacion').attr('onclick', 'ejecutarAJAX('+id+',\''+url+'\',\''+type+'\')');
-                    break;
-                };
+            function redirectView(caso, id){
+                switch(caso){
+                    case 'INVERNADERO':
+                        location.href = '/detalle/invernadero/'+id;
+                        break;
+                    case 'SENSOR':
+                        location.href = '/detalle/sensor/'+id;
+                        break;
+                    case 'ACTUADOR':
+                        location.href = '/detalle/actuador/'+id;
+                        break;
+                    case 'DISPOSITIVO':
+                        location.href = '/detalle/dispositivo/'+id;
+                        break;
+                    case 'CULTIVO':
+                        location.href = '/detalle/cultivo/'+id;
+                        break;
+                    case 'PARAMETRO':
+                        location.href = '/detalle/parametro/'+id;
+                        break;
+                }
+            };
+            function operacion(id, nombre, caso){       
+                console.log("OPERACION: "+caso);
+                header = "Eliminar "+caso+": ";
+                body = "<p>¿Seguro que desea eliminar el "+caso+" <strong>"+nombre+"</strong>?</p>"+
+                    "<p>Seleccione 'Continuar' para confirmar la acción</p>";;
+                confirmarAccion(nombre, header, body);
+                switch(caso){
+                    case 'INVERNADERO':
+                        url = '{% url 'invernaderos:ajax-invernadero' %}';
+                        break;
+                    case 'SENSOR':
+                        url = '{% url 'invernaderos:ajax-sensor' %}';
+                        break;
+                    case 'ACTUADOR':
+                        url = '{% url 'invernaderos:ajax-actuador' %}';
+                        break;
+                    case 'DISPOSITIVO':
+                        url = '{% url 'invernaderos:ajax-dispositivo' %}';
+                        break;
+                    case 'CULTIVO':
+                        url = '{% url 'invernaderos:ajax-cultivo' %}';
+                        break;
+                    case 'PARAMETRO':
+                        url = '{% url 'invernaderos:ajax-parametro' %}';
+                        break;
+                }
+                $('#confirmacion').attr('onclick', 'ejecutarAJAX('+id+',\''+url+'\')');
             };
 
-            function cargarModal(nombre, header, body, footer){
-              console.log('CARGARMODAL: '+nombre);
-                $('#modalHeader').empty();
-                $('#modalHeader').append(
-                "<strong>"+header+nombre+"</strong>"
-                );
-                $('#modalBody').empty();
-                $('#modalBody').append(
-                body
-                );
-                $('#modalFooter').empty();
-                $('#modalFooter').append(
-                footer
-                );
-                $('#detalle').empty();
-            };
-
-            function confirmarAccion(nombre, header, body, footer){
+            function confirmarAccion(nombre, header, body){
                 console.log("CONFIRMARACCION: "+nombre);
                 $('#modalHeader').empty();
                 $('#modalHeader').append(
@@ -122,79 +122,35 @@
                 $('#modalBody').append(
                 body
                 );
-                $('#modalFooter').empty();
-                $('#modalFooter').append(
-                footer
-                );
                 $('#detalleModal').modal('show');
             };
 
-            function ejecutarAJAX(id, url, type){
-                console.log("EJECUTARAJAX: "+type);
-                result = ajaxOperacion(id, url, type);
-                switch(type){
-                case 'GET':
-                    result.done(function(data){
-                      alert(data)
-                      $('#visualizarModal').modal('show');
-                      load(
-                          data,
-                          '#detalle'
-                      );
-                    }).fail(function(data){
-                      //alert(data.message)
-                      console.log("error");
-                    }).always(function(){
-                      console.log("complete");
-                    });
-                    break;
-                case 'PUT':
-                    result.done(function(data){
-                      alert(data.message)
-                      $('#detalleModal').modal('hide');
-                    }).fail(function(data){
-                    alert(data.message)
-                      console.log("error");
-                      $('#detalleModal').modal('hide')
-                    }).always(function(respuesta){
-                      console.log("complete");
-                    });
-                    break;
-                case 'DELETE':
-                    result.done(function() {
-                      alert("Se efectuó el borrado exitosamente");
-                      $('#detalleModal').modal('hide');
-                      $('#'+id).remove();
-                    }).fail(function() {
-                      console.log("error");
-                      alert("El borrado no pudo ser ejecutado");
-                      $('#detalleModal').modal('hide');
-                    }).always(function() {
-                      console.log("complete");
-                    });
-                    break;
-                }
-
-            };
-
-            function ajaxOperacion(id, url, type){
-              console.log("AJAX: "+type);
-                return $.ajax({
+            function ejecutarAJAX(id, url){
+                console.log("EJECUTARAJAX: "+url);
+                $.ajax({
                     url: url,
-                    type: type,
+                    type: 'DELETE',
                     data: {
                     'id': id,
                     },
                     success: function(data){
-                        alert(data);
-                      $('#detalle').load(
-                        data.invernadero, '#detalle'
-                      );
+                      console.log(data);
                       console.log("SUCCES");
                     },
                     dataType: 'json'
+                }).done(function() {
+                    alert("Se efectuó el borrado exitosamente");
+                    $('#detalleModal').modal('hide');
+                    $('#'+id).remove();
+                }).fail(function() {
+                    console.log("error");
+                    alert("El borrado no pudo ser ejecutado");
+                    $('#detalleModal').modal('hide');
+                }).always(function() {
+                    console.log("complete");
                 });
             };
+
             $(function () {
                 $.ajaxSetup({
                     headers: { "X-CSRFToken": getCookie("csrftoken") }
@@ -210,22 +166,23 @@
         <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 
         <!-- Page level plugin JavaScript-->
+        <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
         <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
         <script src="{% static 'vendor/datatables/dataTables.bootstrap4.js' %}"></script>
 
         <!-- Custom scripts for all pages-->
         <script src="{% static 'js/sb-admin.min.js' %}"></script>
         <script src="{% static 'js/invernaderos.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/csrf.js' %}"></script>
+        <script src="{% static 'js/csrf.js' %}"></script>
 
         <!-- Demo scripts for this page-->
         <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+        <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
     </div>
     <!--VIEW, EDIT & DELETE MODAL-->
     <div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                {% csrf_token %}
                 <div class="modal-header">
                     <h5 class="modal-title bold" id="modalHeader"></h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -233,12 +190,13 @@
                     </button>
                 </div>
                 <div id="modalBody" class="modal-body">
-                  <form action="" method="POST" id="detalle">
-                    {% csrf_token %}
-                    {{ data.form }}
-                  </form>
+                  <div class="" id="detalle">
+
+                  </div>
                 </div>
                 <div id="modalFooter" class="modal-footer">
+                    <button class='btn btn-primary' type='button' data-dismiss='modal'>Cancelar</button>
+                    <button id='confirmacion' class='btn btn-danger' href='#'>Continuar</button>
                 </div>
             </div> 
         </div>

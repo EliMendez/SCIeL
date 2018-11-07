@@ -78,10 +78,9 @@
                       <td class="text-center">{{dispositivo.id_dispositivo}}</td>
                       <td>{{ dispositivo.nombre_dispositivo }}</td>
                       <td class="text-center">
-                        {% csrf_token %}
-                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ dispositivo.id_dispositivo }}, '{{dispositivo.nombre_dispositivo}}', '/ajax/dispositivo/', 'GET', 'DISPOSITIVO');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa-edit" name="editar" href="#" data-toggle="modal" onclick="operacion({{ dispositivo.id_dispositivo }}, '{{dispositivo.nombre_dispositivo}}', '/ajax/dispositivo/', 'LOAD', 'DISPOSITIVO');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" data-toggle="modal" onclick="operacion({{ dispositivo.id_dispositivo }}, '{{dispositivo.nombre_dispositivo}}', '/ajax/dispositivo/', 'DELETE', 'DISPOSITIVO');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ dispositivo.id_dispositivo }}, '{{dispositivo.nombre_dispositivo}}', 'DISPOSITIVO');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="{% url 'invernaderos:dispositivo-detalle' %}" data-toggle="modal" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="{% url 'invernaderos:dispositivo-edicion' %}" data-toggle="modal" style="color:gray !important"></a>
                       </td>                          
                     </tr>      
                   {% endfor %}

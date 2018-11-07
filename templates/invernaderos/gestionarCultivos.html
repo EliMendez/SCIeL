@@ -80,10 +80,9 @@
                       <td>{{ cultivo.nombre_cultivo }}</td>
                       <td>{{ cultivo.periodo_cosecha }}</td>
                       <td class="text-center">
-                          {% csrf_token %}
-                          <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ cultivo.id_cultivo }}, '{{cultivo.nombre_cultivo}}', '/ajax/cultivo/', 'GET', 'CULTIVO');" style="color:gray !important"></a>
-                          <a class="fas fa-w fa-edit" name="editar" href="#" data-toggle="modal" onclick="operacion({{ cultivo.id_cultivo }}, '{{cultivo.nombre_cultivo}}', '/ajax/cultivo/', 'LOAD', 'CULTIVO');" style="color:gray !important"></a>
-                          <a class="fas fa-w fa fa-trash" name="eliminar" href="#" data-toggle="modal" onclick="operacion({{ cultivo.id_cultivo }}, '{{cultivo.nombre_cultivo}}', '/ajax/cultivo/', 'DELETE', 'CULTIVO');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ cultivo.id_cultivo }}, '{{cultivo.nombre_cultivo}}', 'CULTIVO');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="{% url 'invernaderos:cultivo-detalle' %}" data-toggle="modal" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="{% url 'invernaderos:cultivo-edicion' %}" data-toggle="modal" style="color:gray !important"></a>
                       </td>                          
                     </tr>
                   {% endfor %}

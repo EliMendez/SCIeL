@@ -82,10 +82,9 @@
                       <td>{{ actuador.id_dispositivo }}</td>
                       <td>{{ actuador.id_invernadero }}</td>
                       <td class="text-center">
-                        {% csrf_token %}
-                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ actuador.id_actuador }}, '{{actuador.nombre_actuador}}', '/ajax/actuador/', 'GET', 'ACTUADOR');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa-edit" name="editar" href="#" data-toggle="modal" onclick="operacion({{ actuador.id_actuador }}, '{{actuador.nombre_actuador}}', '/ajax/actuador/', 'LOAD', 'ACTUADOR');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" data-toggle="modal" onclick="operacion({{ actuador.id_actuador }}, '{{actuador.nombre_actuador}}', '/ajax/actuador/', 'DELETE', 'ACTUADOR');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ actuador.id_actuador }}, '{{actuador.nombre_actuador}}', 'ACTUADOR');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="redirectEdit('ACTUADOR')" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="redirectView('ACTUADOR')" style="color:gray !important"></a>
                       </td>                          
                     </tr>
                   {% endfor %}

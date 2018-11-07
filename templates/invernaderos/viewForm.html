@@ -1,0 +1,105 @@
+{% extends 'header&footer.html' %}
+{% block title %}SCIeL - Gestión de Dispositivos{% endblock title %}
+
+{% block content %}
+    
+  {% block sidebar %}
+    {% if user.is_authenticated %}
+      <!-- Sidebar -->
+      <ul class="sidebar navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'invernaderos:dispositivos' %}">
+            <i class="fas fa-fw fa-cubes"></i>
+            <span>Dispositivos</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'invernaderos:sensores' %}">
+            <i class="fas fa-fw fa-thermometer-quarter"></i>
+            <span>Sensores</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'invernaderos:actuadores' %}">
+            <i class="fas fa-fw fa-wrench"></i>
+              <span>Actuadores</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'invernaderos:invernaderos' %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Invernaderos</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'invernaderos:cultivos' %}">
+            <i class="fas fa-fw fa-leaf"></i>
+            <span>Cultivos</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'invernaderos:parametros' %}">
+            <i class="fas fa-fw fa-cogs"></i>
+            <span>Parámetros Estándar</span>
+          </a>
+        </li>
+      </ul>
+    {% endif %}
+  {% endblock sidebar %}
+  {% block tables %}
+  {% load bootstrap %}
+    <div id="content-wrapper">
+      <div class="container-fluid">
+      <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="#">Visualización</a>
+          </li>
+          <li class="breadcrumb-item active">Datos</li>
+        </ol>
+        <!-- DataTables Example -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <i class="fas fa fa-eye"></i>
+            <i> Detalles del {{ invernadero }}</i>
+          </div>
+          <div class="card-body">
+            <form action="" method="POST" disabled>
+                {% csrf_token %}
+                <div class="form-group">
+                  <label class="control-label sr-only bold" for="id_id_dispositivo">Dispositivo</label>
+                  <select name="id_dispositivo" class=" form-control" id="id_id_dispositivo">
+                    <option value="" disabled selected>{{ invernadero.invernadero.id_dispositivo }}</option>
+                  </select>
+                  <p class="help-block">{{invernadero.invernadero.help_text}}</p>
+                </div>
+                <div class="form-group">
+                  <label class="control-label sr-only bold" for="id_id_usuario">Usuario</label>
+                  <select name="id_usuario" class=" form-control" id="id_id_usuario">
+                    <option value="" disabled selected>{{ invernadero.invernadero.id_usuario }}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="" class="control-label sr-only bold">
+                    
+                  </label>
+                  <select name="id_cultivo" class=" form-control" id="id_id_cultivo" multiple="" disabled>
+                    <option value="1" selected="">Chile de árbol</option>
+                    <option value="3">Maiz</option>
+                    <option value="2" selected="">Tomate</option>                  
+                    <option value="4">Tomate Cascade Early</option>                
+                    <option value="6">Tomate Delicious Supersteak</option>                  
+                    <option value="5">Tomate Early Girl</option>
+                  </select>
+                </div>
+                <div class="form-group text-center">
+                    <button class='btn btn-primary' type='button'>Cancelar</button>
+                    <button id='confirmacion' class='btn btn-danger' href='#'>Continuar</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endblock tables %}
+{% endblock content %}

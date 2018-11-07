@@ -81,10 +81,9 @@
                       <td>{{ parametro.id_invernadero }}</td>
                       <td class="text-center">{{ parametro.magnitud_referencia }}</td>
                       <td class="text-center">
-                        {% csrf_token %}
-                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ parametro.id_parametro }}, '{{parametro.nombre_parametro}}', '/ajax/parametro/', 'GET', 'PARAMETRO');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa-edit" name="editar" href="#" data-toggle="modal" onclick="operacion({{ parametro.id_parametro }}, '{{parametro.nombre_parametro}}', '/ajax/parametro/', 'LOAD', 'PARAMETRO');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" data-toggle="modal" onclick="operacion({{ parametro.id_parametro }}, '{{parametro.nombre_parametro}}', '/ajax/parametro/', 'DELETE', 'PARAMETRO');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ parametro.id_parametro }}, '{{parametro.nombre_parametro}}', 'PARAMETRO');" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="{% url 'invernaderos:parametro-detalle' %}" data-toggle="modal" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="{% url 'invernaderos:parametro-edicion' %}" data-toggle="modal" style="color:gray !important"></a>
                       </td>                          
                     </tr>
                   {% endfor %}

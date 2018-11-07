@@ -1,5 +1,4 @@
 from django.urls import path, re_path
-from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 urlpatterns = [
@@ -54,6 +53,96 @@ urlpatterns = [
         name='actuadores'
     ),
     path(
+        'detalle/invernadero/<slug:pk>/',
+        views.InvernaderoDetailView.as_view(),
+        name='invernadero-detalle'
+    ),
+    path(
+        'detalle/dispositivo/<slug:pk>/',
+        views.DispositivoDetailView.as_view(),
+        name='dispositivo-detalle'
+    ),
+    path(
+        'detalle/sensor/<slug:pk>/',
+        views.SensorDetailView.as_view(),
+        name='sensor-detalle'
+    ),
+    path(
+        'detalle/actuador/<slug:pk>/',
+        views.ActuadorDetailView.as_view(),
+        name='actuador-detalle'
+    ),
+    path(
+        'detalle/cultivo/<slug:pk>/',
+        views.CultivoDetailView.as_view(),
+        name='cultivo-detalle'
+    ),
+    path(
+        'detalle/parametro/<slug:pk>/',
+        views.ParametroDetailView.as_view(),
+        name='parametro-detalle'
+    ),
+    path(
+        'edicion/invernadero/<slug:pk>/',
+        views.InvernaderoUpdateView.as_view(),
+        name='invernadero-edicion'
+    ),
+    path(
+        'edicion/dispositivo/<slug:pk>/',
+        views.DispositivoUpdateView.as_view(),
+        name='dispositivo-edicion'
+    ),
+    path(
+        'edicion/sensor/<slug:pk>/',
+        views.SensorUpdateView.as_view(),
+        name='sensor-edicion'
+    ),
+    path(
+        'edicion/actuador/<slug:pk>/',
+        views.ActuadorUpdateView.as_view(),
+        name='actuador-edicion'
+    ),
+    path(
+        'edicion/cultivo/<slug:pk>/',
+        views.CultivoUpdateView.as_view(),
+        name='cultivo-edicion'
+    ),
+    path(
+        'edicion/parametro/<slug:pk>/',
+        views.ParametroUpdateView.as_view(),
+        name='parametro-edicion'
+    ),
+    path(
+        'crear/invernadero/',
+        views.InvernaderoCreateView.as_view(),
+        name='invernadero-crear'
+    ),
+    path(
+        'crear/dispositivo/',
+        views.DispositivoCreateView.as_view(),
+        name='dispositivo-crear'
+    ),
+    path(
+        'crear/sensor/',
+        views.SensorCreateView.as_view(),
+        name='sensor-crear'
+    ),
+    path(
+        'crear/actuador/',
+        views.ActuadorCreateView.as_view(),
+        name='actuador-crear'
+    ),
+    path(
+        'crear/cultivo/',
+        views.CultivoCreateView.as_view(),
+        name='cultivo-crear'
+    ),
+    path(
+        'crear/parametro/',
+        views.ParametroCreateView.as_view(),
+        name='parametro-crear'
+    ),
+    path(
         'ajax/invernadero/',
         views.invernadero,
         name='ajax-invernadero'
@@ -85,7 +174,7 @@ urlpatterns = [
     ),
     path(
         'perfil/<slug:pk>/',
-        views.PerfilUpdateView.as_view(),
+        views.PerfilUpdateView.as_view(template_name = 'invernaderos/view&edit.html'),
         name='perfil'
     )
 ]
