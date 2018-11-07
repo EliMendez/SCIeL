@@ -320,8 +320,8 @@ class CultivoDetailView(LoginRequiredMixin, DetailView):
 
 class InvernaderoCreateView(LoginRequiredMixin, CreateView):
     model = Invernadero
-    success_url = reverse('invernaderos')
     template_name = 'invernaderos/editForm.html'
+    success_url = '/'
     fields = [
         'id_dispositivo',
         'id_cultivo',
@@ -331,12 +331,8 @@ class InvernaderoCreateView(LoginRequiredMixin, CreateView):
     
     def form_valid(self, form):
         invernadero = form.save()
-        user = self.request.user
-        invernadero.id_usuario = user
-        invernadero.save()
-        return redirect(success_url)
-
-    
+        invernadero.id_usuario = self.request.user
+        return super(InvernaderoCreateView, self).form_valid(form)
 
 
 class ParametroCreateView(LoginRequiredMixin, CreateView):
