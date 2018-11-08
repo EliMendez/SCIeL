@@ -80,7 +80,8 @@
                   </tr>
                 </thead>
                 <tbody id="bodyTable">
-                  {% for sensor in sensores %}          
+                  {% for sensor in sensores %}
+                    {% csrf_token %}{% csrf_token %}          
                     <tr id="{{sensor.id_sensor}}">
                       <td class="text-center">{{sensor.id_sensor}}</td>
                       <td>{{ sensor.nombre_sensor }}</td>
