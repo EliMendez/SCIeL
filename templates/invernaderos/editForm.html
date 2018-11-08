@@ -53,23 +53,24 @@
       <!-- Breadcrumbs-->
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="#">Edición</a>
+            <a href="#">Edición  | Creación</a>
           </li>
-          <li class="breadcrumb-item active">Datos</li>
+          <li class="breadcrumb-item active">Ingreso de Datos</li>
         </ol>
         <!-- DataTables Example -->
         <div class="card mb-3">
-          <div class="card-header">
-            <i class="fas fa-table"></i>
-            {{ form.verbose_name_plural }}
+          <div class="card-header text-center">
+            <i class="fas fa-edit"></i>
+            Edición | Creación
+            <i class="fas fa-plus-circle"></i>
           </div>
           <div class="card-body">
             <form action="" method="POST" disabled id="detalleForm">
                 {% csrf_token %}
                 {{ form|bootstrap_inline }}
                 <div class="form-group text-center">
-                    <button class='btn btn-primary' onclick="javascript:history.back()" type='button'>Cancelar</button>
-                    <button id='aprobar' type="submit" class='btn btn-danger' href='#'>Continuar</button>
+                    <button id='aprobar' type="submit" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
+                    <button class='btn btn-secondary' onclick="javascript:history.back()" style="width: 30%" type='button'>Cancelar</button>                    
                 </div>
             </form>
             <script>

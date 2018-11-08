@@ -92,22 +92,22 @@
                 switch(caso){
                     case 'INVERNADERO':
                         
-                        url = '/ajax/invernadero/'+id+'/'
+                        url = '/ajax/invernadero/'+id+'/';
                         break;
                     case 'SENSOR':
-                        url = '{% url 'invernaderos:ajax-sensor' %}';
+                        url = '/ajax/sensor/'+id+'/';
                         break;
                     case 'ACTUADOR':
-                        url = '{% url 'invernaderos:ajax-actuador' %}';
+                        url = '/ajax/actuador/'+id+'/';
                         break;
                     case 'DISPOSITIVO':
-                        url = '{% url 'invernaderos:ajax-dispositivo' %}';
+                        url = '/ajax/dispositivo/'+id+'/';
                         break;
                     case 'CULTIVO':
-                        url = '{% url 'invernaderos:ajax-cultivo' %}';
+                        url = '/ajax/cultivo/'+id+'/';
                         break;
                     case 'PARAMETRO':
-                        url = '{% url 'invernaderos:ajax-parametro' %}';
+                        url = '/ajax/parametro/'+id+'/';
                         break;
                 }
                 $('#confirmacion').attr('onclick', 'ejecutarAJAX('+id+',\''+url+'\')');

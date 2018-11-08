@@ -7,7 +7,7 @@
     {% if user.is_authenticated %}
       <!-- Sidebar -->
       <ul class="sidebar navbar-nav">
-        <li class="nav-item active">
+        <li class="nav-item">
           <a class="nav-link" href="{% url 'invernaderos:dispositivos' %}">
             <i class="fas fa-fw fa-cubes"></i>
             <span>Dispositivos</span>
@@ -62,8 +62,8 @@
             <i class="fas fa-table"></i>
             Dispositivos
           </div>
-          <div class="card-body">
-            <div id="content-wrapper center">
+          <div class="card-body text-center">
+            <div id="content-wrapper">
               <div class="container-fluid">
                 <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
@@ -74,10 +74,10 @@
                 </ol>
                 <!-- Page Content -->
                 <h1 class="display-1">404</h1>
-                <p class="lead">Página no encontrada. Tú puedes
+                <p class="lead">Página no encontrada. Puedes
                   <a href="javascript:history.back()">regresar</a>
-                  a la página anterios, o
-                  <a href="{% url 'invernaderos:invernaderos' %}">regresar a la págnia inicial</a>.</p>
+                  a la página anterior, o sí lo prefieres, puedes
+                  <a href="{% url 'invernaderos:invernaderos' %}">regresar a la página inicial</a>.</p>
               </div>
             </div>
             <!-- /.content-wrapper -->

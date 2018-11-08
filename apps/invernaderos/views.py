@@ -448,7 +448,7 @@ def monitorear_invernadero(request, id_invernadero):
             temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
             #temp = loader.get_template('404.html')
             
-            return HttpResponse(temp.render({}, request))
+            return HttpResponse(temp.render(context, request))
         else:
             temp = loader.get_template('404.html')
             return HttpResponse(temp.render({}, request))
