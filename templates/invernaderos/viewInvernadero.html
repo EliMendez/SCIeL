@@ -61,38 +61,56 @@
         <div class="card mb-3">
           <div class="card-header">
             <i class="fas fa fa-eye"></i>
-            <i> Detalles del {{ invernadero }}</i>
+            <i> Detalles del invernadero: {{ invernadero }}</i>
           </div>
           <div class="card-body">
-            <form action="" method="POST" disabled>
-                {% csrf_token %}
-                <div class="form-group">
-                  <label class="control-label bold" for="id_id_dispositivo">Dispositivo</label>
-                  <select name="id_dispositivo" class=" form-control" id="id_id_dispositivo">
-                    <option value="" disabled selected>{{ invernadero.invernadero.id_dispositivo }}</option>
-                  </select>
-                  <p class="help-block">{{invernadero.invernadero.help_text}}</p>
-                </div>
-                <div class="form-group">
-                  <label class="control-label bold" for="id_id_usuario">Usuario</label>
-                  <select name="id_usuario" class=" form-control" id="id_id_usuario">
-                    <option value="" disabled selected>{{ invernadero.invernadero.id_usuario }}</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="" class="control-label bold">
-                    Cultivos
-                  </label>
-                  <select name="id_cultivo" class=" form-control" id="id_id_cultivo" multiple="" disabled>
-                    {% for cultivo in invernadero.id_cultivo %}
-                      <option value="{{ cultivo.id_cultivo }}" selected="">{{ cultivo.nombre_cultivo }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="form-group text-center">
-                    <button class='btn btn-secondary' onclick="javascript:history.back()" type='button'>Salir</button>
-                </div>
-            </form>
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <tbody id="bodyTable">
+                    <tr>
+                      <td class="text-right">
+                        Identificador
+                      </td>
+                      <td class="text-left">{{invernadero.id_invernadero}}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-right">
+                        Nombre del Invernadero
+                      </td>
+                      <td class="text-left">{{ invernadero.nombre_invernadero }}</a></td>
+                    </tr>
+                    <tr>
+                      <td class="text-right">
+                          Ubicación del Invernadero
+                      </td>
+                      <td class="text-left">{{ invernadero.ubicacion }}</a></td>  
+                    </tr>
+                    <tr>
+                      <td class="text-right">
+                        Usuario
+                      </td>
+                      <td class="text-left">{{ invernadero.id_usuario }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-right">
+                        Dispositivo
+                      </td>
+                      <td class="text-left">{{ invernadero.id_dispositivo }}</td>
+                    </tr>
+                    <!--<tr>
+                      <td class="text-right">
+                        Cultivos
+                      </td>
+                      <td class="text-left">
+                          {{ invernadero.id_cultivo }}
+                      </td>
+                    </tr>-->
+                </tbody>
+              </table>
+            </div>
+            <div style="align-content: center !important;">
+              <button class='btn btn-primary' onclick="javascript:history.back()" style="width: 75%;" type='button'>Salir</button>
+            </div>
           </div>
         </div>
       </div>

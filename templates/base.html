@@ -87,7 +87,7 @@
                 console.log("OPERACION: "+caso);
                 header = "Eliminar "+caso+": ";
                 body = "<p>¿Seguro que desea eliminar el "+caso+" <strong>"+nombre+"</strong>?</p>"+
-                    "<p>Seleccione 'Continuar' para confirmar la acción</p>";;
+                    "<p>Seleccione 'Continuar' para confirmar la acción</p>";
                 confirmarAccion(nombre, header, body);
                 switch(caso){
                     case 'INVERNADERO':
@@ -131,7 +131,7 @@
                     url: url,
                     type: 'DELETE',
                     data: {
-                    'id': id,
+                        'id_invernadero': id,
                     },
                     success: function(data){
                       console.log(data);

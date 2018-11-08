@@ -182,10 +182,10 @@ class ActuadoresListView(LoginRequiredMixin, ListView):
 class InvernaderoUpdateView(LoginRequiredMixin, UpdateView):
     model = Invernadero
     template_name = 'invernaderos/editForm.html'
+    success_url = '/'
     fields = [
         'id_invernadero',
         'id_dispositivo',
-        'id_usuario',
         'id_cultivo',
         'nombre_invernadero',
         'ubicacion'
@@ -195,6 +195,7 @@ class InvernaderoUpdateView(LoginRequiredMixin, UpdateView):
 class ParametroUpdateView(LoginRequiredMixin, UpdateView):
     model = Parametro
     template_name = 'invernaderos/editForm.html'
+    success_url = '/parametros/'
     fields = [
         'id_invernadero',
         'nombre_parametro',
@@ -241,7 +242,7 @@ class CultivoUpdateView(LoginRequiredMixin, UpdateView):
 
 class InvernaderoDetailView(LoginRequiredMixin, DetailView):
     model = Invernadero
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewInvernadero.html'
     fields = [
         'id_invernadero',
         'id_dispositivo',
@@ -252,13 +253,17 @@ class InvernaderoDetailView(LoginRequiredMixin, DetailView):
     ]
     context_object_name = 'invernadero'
 
-    def get_context_data(self, **kwargs):
+    """def get_context_data(self, **kwargs):
         caso = 'INVERNADERO'
-        context = {
-            'invernadero': super().get_context_data(**kwargs),
-            'caso': caso
+        id = self.kwargs['pk']
+        invernadero2 = Invernadero.objects.get(id_invernadero=self.kwargs['pk'])
+        invernadero_cultivo = invernadero2.id_cultivo.all()
+        invernadero = {
+            'invernadero': invernadero2,
+            'caso': caso,
+            'cultivo': invernadero_cultivo
         }
-        return context
+        return invernadero"""
 
 
 class ParametroDetailView(LoginRequiredMixin, DetailView):
@@ -482,7 +487,7 @@ def editar_invernadero(request):
 @login_required(login_url='/sign-in/')
 def invernadero(request):  
     if request.method == 'DELETE':
-        id_invernadero = request.POST['id']
+        id_invernadero = request.POST['id_invernadero']
         invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
         invernadero.is_baja = True
         invernadero.save()
