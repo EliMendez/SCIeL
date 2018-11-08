@@ -142,33 +142,33 @@ urlpatterns = [
         views.ParametroCreateView.as_view(),
         name='parametro-crear'
     ),
-    path(
-        'ajax/invernadero/',
+    re_path(
+        r'ajax/invernadero/(?P<id_invernadero>[0-9]+)/',
         views.invernadero,
         name='ajax-invernadero'
     ),
-    path(
-        'ajax/dispositivo/',
+    re_path(
+        r'ajax/dispositivo/(?P<id_dispositivo>[0-9]+)/',
         views.dispositivo,
         name='ajax-dispositivo'
     ),
-    path(
-        'ajax/sensor/',
+    re_path(
+        r'ajax/sensor/(?P<id_sensor>[0-9]+)/',
         views.sensor,
         name='ajax-sensor'
     ),
-    path(
-        'ajax/actuador/',
+    re_path(
+        r'ajax/actuador/(?P<id_actuador>[0-9]+)/',
         views.actuador,
         name='ajax-actuador'
     ),
-    path(
-        'ajax/cultivo/',
+    re_path(
+        r'ajax/cultivo/(?P<id_cultivo>[0-9]+)/',
         views.cultivo,
         name='ajax-cultivo'
     ),
-    path(
-        'ajax/parametro/',
+    re_path(
+        r'ajax/parametro/(?P<id_parametro>[0-9]+)/',
         views.parametro,
         name='ajax-parametro'
     ),

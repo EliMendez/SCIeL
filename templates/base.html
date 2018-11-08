@@ -91,7 +91,8 @@
                 confirmarAccion(nombre, header, body);
                 switch(caso){
                     case 'INVERNADERO':
-                        url = '{% url 'invernaderos:ajax-invernadero' %}';
+                        
+                        url = '/ajax/invernadero/'+id+'/'
                         break;
                     case 'SENSOR':
                         url = '{% url 'invernaderos:ajax-sensor' %}';
@@ -131,15 +132,15 @@
                     url: url,
                     type: 'DELETE',
                     data: {
-                        'id_invernadero': id,
+                        'identificador': id,
                     },
                     success: function(data){
                       console.log(data);
                       console.log("SUCCES");
                     },
                     dataType: 'json'
-                }).done(function() {
-                    alert("Se efectuó el borrado exitosamente");
+                }).done(function(data) {
+                    alert(data.message);
                     $('#detalleModal').modal('hide');
                     $('#'+id).remove();
                 }).fail(function() {

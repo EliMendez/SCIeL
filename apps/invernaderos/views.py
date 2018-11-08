@@ -485,61 +485,61 @@ def editar_invernadero(request):
     return HttpResponse(form)
 
 @login_required(login_url='/sign-in/')
-def invernadero(request):  
+def invernadero(request, id_invernadero):  
     if request.method == 'DELETE':
-        id_invernadero = request.POST['id_invernadero']
+        #id_invernadero = request.GET['identificador']
         invernadero = Invernadero.objects.get(id_invernadero=id_invernadero)
         invernadero.is_baja = True
         invernadero.save()
         message = "El invernadero fue borrado exitosamente"
-        return RFResponse(data=message, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(data={'message':message})
 
 @login_required(login_url='/sign-in/')
-def dispositivo(request):
+def dispositivo(request, id_dispositivo):
     if request.method == 'DELETE':
-        id_dispositivo = request.POST['id']
+        #id_dispositivo = request.POST['id']
         dispositivo = Dispositivo.objects.get(id_dispositivo=id_dispositivo)
         dispositivo.is_baja = True
         dispositivo.save()
         message = "El dispositivo fue borrado exitosamente"
-        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)        
+        return JsonResponse(data={'message': message})        
 
 @login_required(login_url='/sign-in/')
-def sensor(request):
+def sensor(request, id_sensor):
     if request.method == 'DELETE':
-        id_sensor = request.POST['id']
+        #id_sensor = request.POST['id']
         sensor = Sensor.objects.get(id_sensor=id_sensor)
         sensor.is_baja = True
         sensor.save()
         message = "El sensor fue borrado exitosamente"
-        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(data={'message': message})
 
 @login_required(login_url='/sign-in/')
-def actuador(request):  
+def actuador(request, id_actuador):  
     if request.method == 'DELETE':
-        id_actuador = request.POST['id']
+        #id_actuador = request.POST['id']
         actuador = Actuador.objects.get(id_actuador=id_actuador)
         actuador.is_baja = True
         actuador.save()
         message = "El actuador fue borrado exitosamente"
-        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(data={'message': message})
 
 @login_required(login_url='/sign-in/')
-def cultivo(request):
+def cultivo(request, id_cultivo):
     if request.method == 'DELETE':
-        id_cultivo = request.POST['id']
+        #id_cultivo = request.POST['id']
         cultivo = Cultivo.objects.get(id_cultivo=id_cultivo)
         cultivo.is_baja = True
         cultivo.save()
         message = "El cultivo fue borrado exitosamente"
-        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(data={'message': message})
 
 @login_required(login_url='/sign-in/')
-def parametro(request):   
+def parametro(request, parametro):   
     if request.method == 'DELETE':
-        id_parametro = request.POST['id']
+        #id_parametro = request.POST['id']
         parametro = Parametro.objects.get(id_parametro=id_parametro)
         parametro.is_baja = True
         parametro.save()
         message = "El parametro fue borrado exitosamente"
-        return RFResponse(data={'message': message}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(data={'message': message})
