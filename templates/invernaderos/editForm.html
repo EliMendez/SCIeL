@@ -1,5 +1,5 @@
 {% extends 'header&footer.html' %}
-{% block title %}SCIeL - Gestión de Dispositivos{% endblock title %}
+{% block title %}SCIeL - Edición / {% endblock title %}
 
 {% block content %}
     
@@ -7,7 +7,7 @@
     {% if user.is_authenticated %}
       <!-- Sidebar -->
       <ul class="sidebar navbar-nav">
-        <li class="nav-item active">
+        <li class="nav-item">
           <a class="nav-link" href="{% url 'invernaderos:dispositivos' %}">
             <i class="fas fa-fw fa-cubes"></i>
             <span>Dispositivos</span>
