@@ -56,6 +56,12 @@
           <li class="breadcrumb-item active">Datos</li>
         </ol>
         <!-- DataTables Example -->
+        <div class="alert bold alert-info">
+          <i class="fas fw fa-plus-circle"></i>
+          <a href="{% url 'invernaderos:sensor-crear' %}">
+            <strong>¡Click Aquí para agregar un nuevo parametro!</strong>
+          </a>
+        </div>
         <div class="card mb-3">
           <div class="card-header">
             <i class="fas fa-table"></i>
@@ -81,9 +87,9 @@
                       <td>{{ parametro.id_invernadero }}</td>
                       <td class="text-center">{{ parametro.magnitud_referencia }}</td>
                       <td class="text-center">
-                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ parametro.id_parametro }}, '{{parametro.nombre_parametro}}', 'PARAMETRO');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa-edit" name="editar" href="{% url 'invernaderos:parametro-detalle' %}" data-toggle="modal" style="color:gray !important"></a>
-                        <a class="fas fa-w fa fa-trash" name="eliminar" href="{% url 'invernaderos:parametro-edicion' %}" data-toggle="modal" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="redirectView('PARAMETRO', {{ parametro.id_parametro }})" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="redirectEdit('PARAMETRO', {{ parametro.id_parametro }})" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="operacion({{ parametro.id_parametro }}, '{{parametro.nombre_parametro}}', 'PARAMETRO');" style="color:gray !important"></a>
                       </td>                          
                     </tr>
                   {% endfor %}

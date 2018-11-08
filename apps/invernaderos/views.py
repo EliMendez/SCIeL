@@ -332,13 +332,13 @@ class InvernaderoCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         invernadero = form.save()
         invernadero.id_usuario = self.request.user
-        return super(InvernaderoCreateView, self).form_valid(form)
+        return super(InvernaderoCreateView, self).form_valid(form)  
 
 
 class ParametroCreateView(LoginRequiredMixin, CreateView):
     model = Parametro
-    success_url = '/parametro/'
     template_name = 'invernaderos/editForm.html'
+    success_url = '/parametros/'
     fields = (
         'id_invernadero',
         'nombre_parametro',
@@ -348,6 +348,7 @@ class ParametroCreateView(LoginRequiredMixin, CreateView):
 
 class ActuadorCreateView(LoginRequiredMixin, CreateView):
     model = Actuador
+    success_url = '/actuadores/'
     template_name = 'invernaderos/editForm.html'
     fields = (
         'id_dispositivo',
@@ -358,6 +359,7 @@ class ActuadorCreateView(LoginRequiredMixin, CreateView):
 
 class SensorCreateView(LoginRequiredMixin, CreateView):
     model = Sensor
+    success_url = '/sensores/'
     template_name = 'invernaderos/editForm.html'
     fields = (
         'id_dispositivo',
@@ -368,7 +370,7 @@ class SensorCreateView(LoginRequiredMixin, CreateView):
 
 class DispositivoCreateView(LoginRequiredMixin, CreateView):
     model = Dispositivo
-    success_url = '/dispositivo/'
+    success_url = '/dispositivos/'
     template_name = 'invernaderos/editForm.html'
     fields = (
         'nombre_dispositivo'

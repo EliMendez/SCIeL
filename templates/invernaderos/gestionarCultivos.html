@@ -57,6 +57,12 @@
         </ol>
 
         <!-- DataTables Example -->
+        <div class="alert bold alert-info">
+          <i class="fas fw fa-plus-circle"></i>
+          <a href="{% url 'invernaderos:cultivo-crear' %}">
+            <strong>¡Click Aquí para agregar un nuevo cultivo!</strong>
+          </a>
+        </div>
         <div class="card mb-3">
           <div class="card-header">
             <i class="fas fa-table"></i>
@@ -80,9 +86,9 @@
                       <td>{{ cultivo.nombre_cultivo }}</td>
                       <td>{{ cultivo.periodo_cosecha }}</td>
                       <td class="text-center">
-                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ cultivo.id_cultivo }}, '{{cultivo.nombre_cultivo}}', 'CULTIVO');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa-edit" name="editar" href="{% url 'invernaderos:cultivo-detalle' %}" data-toggle="modal" style="color:gray !important"></a>
-                        <a class="fas fa-w fa fa-trash" name="eliminar" href="{% url 'invernaderos:cultivo-edicion' %}" data-toggle="modal" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="redirectView('CULTIVO', {{ cultivo.id_cultivo }})" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="redirectEdit('CULTIVO', {{ cultivo.id_cultivo }})" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="operacion({{ cultivo.id_cultivo }}, '{{cultivo.nombre_cultivo}}', 'CULTIVO');" style="color:gray !important"></a>
                       </td>                          
                     </tr>
                   {% endfor %}

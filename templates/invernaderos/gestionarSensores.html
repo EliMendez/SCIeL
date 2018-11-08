@@ -56,6 +56,12 @@
           <li class="breadcrumb-item active">Datos</li>
         </ol>
         <!-- DataTables Example -->
+        <div class="alert bold alert-info">
+          <i class="fas fw fa-plus-circle"></i>
+          <a href="{% url 'invernaderos:sensor-crear' %}">
+            <strong>¡Click Aquí para agregar un nuevo sensor!</strong>
+          </a>
+        </div>
         <div class="card mb-3">
           <div class="card-header">
             <i class="fas fa-table"></i>
@@ -81,9 +87,9 @@
                       <td>{{ sensor.id_dispositivo }}</td>
                       <td>{{ sensor.id_invernadero }}</td>
                       <td class="text-center">
-                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="operacion({{ sensor.id_sensor }}, '{{sensor.nombre_sensor}}', 'SENSORR');" style="color:gray !important"></a>
-                        <a class="fas fa-w fa-edit" name="editar" href="{% url 'invernaderos:sensor-detalle' %}" data-toggle="modal" style="color:gray !important"></a>
-                        <a class="fas fa-w fa fa-trash" name="eliminar" href="{% url 'invernaderos:sensor-edicion' %}" data-toggle="modal" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-eye" name="ver" href="#"  data-toggle="modal" onclick="redirectView('SENSOR', {{ sensor.id_sensor }})" style="color:gray !important"></a>
+                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="redirectEdit('SENSOR', {{ sensor.id_sensor }})" style="color:gray !important"></a>
+                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="operacion({{ sensor.id_sensor }}, '{{sensor.nombre_sensor}}', 'SENSOR');" style="color:gray !important"></a>
                       </td>                          
                     </tr>
                   {% endfor %}  

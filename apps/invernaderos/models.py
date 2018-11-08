@@ -15,22 +15,12 @@ class Cultivo(models.Model):
             'exist': 'El indentificador ya existe'
         }
     )
-    id_usuario = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        verbose_name='Usuario',
-        help_text='Usuario al que pertenece este cultivo',
-        error_messages={
-            'select': 'Debe seleccionar uno de la lista'
-        },
-        null=True
-    )
     nombre_cultivo = models.CharField(
         max_length=45,
         null=True, 
         blank=False,
         verbose_name='Nombre del cultivo',
-        help_text='Nombre de la planta a cultivar',
+        help_text='Seleccione el nombre de la planta a cultivar',
         error_messages={
             'empty': 'Este campo no debe quedar vacío'
         }
@@ -47,6 +37,16 @@ class Cultivo(models.Model):
         ],
         null=True, 
         blank=False,
+    )
+    id_usuario = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        verbose_name='Usuario',
+        help_text='Usuario al que pertenece este cultivo',
+        error_messages={
+            'select': 'Debe seleccionar uno de la lista'
+        },
+        null=True
     )
     is_baja = models.BooleanField(
         verbose_name='¿Está de baja?',
@@ -106,11 +106,31 @@ class Invernadero(models.Model):
             'exist': 'El indentificador ya existe'
         }
     )
+    nombre_invernadero = models.CharField(
+        max_length=45,
+        verbose_name='Nombre del invernadero',
+        help_text='Asignele un nombre cualquiera al invernadero',
+        error_messages={
+            'empty': 'Este campo no debe quedar vacío'
+        },
+        null=True, 
+        blank=False
+    )
+    ubicacion = models.CharField(
+        max_length=23,
+        verbose_name='Ubicacion del invernadero',
+        help_text='Ingrese la ubicación del invernadero',
+        error_messages={
+            'empty': 'Este campo no debe quedar vacío'
+        },
+        null=True, 
+        blank=False
+    )
     id_dispositivo = models.ForeignKey(
         Dispositivo,
         on_delete=models.SET_NULL,
         verbose_name='Dispositivo',
-        help_text='Dispositivo que controla este invernadero',
+        help_text='Seleccione el dispositivo que controla este invernadero',
         error_messages={
             'select': 'Debe seleccionar uno de la lista'
         },
@@ -137,26 +157,6 @@ class Invernadero(models.Model):
         }, 
         blank=True
     )
-    nombre_invernadero = models.CharField(
-        max_length=45,
-        verbose_name='Nombre del invernadero',
-        help_text='Asignele un nombre cualquiera al invernadero',
-        error_messages={
-            'empty': 'Este campo no debe quedar vacío'
-        },
-        null=True, 
-        blank=False
-    )
-    ubicacion = models.CharField(
-        max_length=23,
-        verbose_name='Ubicacion del invernadero',
-        help_text='Ingrese la ubicación del invernadero',
-        error_messages={
-            'empty': 'Este campo no debe quedar vacío'
-        },
-        null=True, 
-        blank=False
-    )
     is_baja = models.BooleanField(
         verbose_name='¿Está de baja?',
         blank=False, 
@@ -180,17 +180,6 @@ class Parametro(models.Model):
         error_messages={
             'exist': 'El indentificador ya existe'
         }
-    )
-    id_invernadero = models.ForeignKey(
-        Invernadero,
-        on_delete=models.SET_NULL,
-        verbose_name='Invernadero',
-        help_text='Invernadero al que se asignará este parámetro',
-        error_messages={
-            'select': 'Debe seleccionar uno de la lista'
-        },
-        null=True, 
-        blank=True
     )
     nombre_parametro = models.CharField(
         max_length=45,
@@ -216,8 +205,24 @@ class Parametro(models.Model):
         null=True, 
         blank=False
     )
+    id_invernadero = models.ForeignKey(
+        Invernadero,
+        on_delete=models.SET_NULL,
+        verbose_name='Invernadero',
+        help_text='Seleccione el invernadero al que se asignará este parámetro',
+        error_messages={
+            'select': 'Debe seleccionar uno de la lista'
+        },
+        null=True, 
+        blank=True
+    )
     is_baja = models.BooleanField(
         verbose_name='¿Está de baja?',
+        blank=False, 
+        default=False
+    )
+    is_use = models.BooleanField(
+        verbose_name='¿Está siendo usado?',
         blank=False, 
         default=False
     )
@@ -240,28 +245,6 @@ class Actuador(models.Model):
             'exist': 'El indentificador ya existe'
         }
     )
-    id_dispositivo = models.ForeignKey(
-        Dispositivo,
-        on_delete=models.SET_NULL,
-        verbose_name='Dispositivo',
-        help_text='Dispositivo que se asociará a este actuador',
-        error_messages={
-            'select': 'Debe seleccionar uno de la lista'
-        },
-        null=True, 
-        blank=True
-    )
-    id_invernadero = models.ForeignKey(
-        Invernadero,
-        on_delete=models.SET_NULL,
-        verbose_name='Invernadero',
-        help_text='Invernadero al que se asignará este parámetro',
-        error_messages={
-            'select': 'Debe seleccionar uno de la lista'
-        },
-        null=True, 
-        blank=True
-    )
     nombre_actuador = models.CharField(
         max_length=45,
         verbose_name='Nombre del Actuador',
@@ -272,8 +255,35 @@ class Actuador(models.Model):
         null=True, 
         blank=False
     )
+    id_dispositivo = models.ForeignKey(
+        Dispositivo,
+        on_delete=models.SET_NULL,
+        verbose_name='Dispositivo',
+        help_text='Seleccione el dispositivo que se asociará a este actuador',
+        error_messages={
+            'select': 'Debe seleccionar uno de la lista'
+        },
+        null=True, 
+        blank=True
+    )
+    id_invernadero = models.ForeignKey(
+        Invernadero,
+        on_delete=models.SET_NULL,
+        verbose_name='Invernadero',
+        help_text='Seleccione el invernadero al que se asignará este parámetro',
+        error_messages={
+            'select': 'Debe seleccionar uno de la lista'
+        },
+        null=True, 
+        blank=True
+    )
     is_baja = models.BooleanField(
         verbose_name='¿Está de baja?',
+        blank=False, 
+        default=False
+    )
+    is_use = models.BooleanField(
+        verbose_name='¿Está siendo usado?',
         blank=False, 
         default=False
     )
@@ -296,11 +306,21 @@ class Sensor(models.Model):
             'exist': 'El indentificador ya existe'
         }
     )
+    nombre_sensor = models.CharField(
+        max_length=45,
+        verbose_name='Nombre del sensor',
+        help_text='Ingrese un nombre para este sensor',
+        error_messages={
+            'empty': 'Este campo no debe quedar vacío'
+        },
+        null=True, 
+        blank=False
+    )
     id_dispositivo = models.ForeignKey(
         Dispositivo,
         on_delete=models.SET_NULL,
         verbose_name='Dispositivo',
-        help_text='Dispositivo asociado a este sensor',
+        help_text='Seleccione el dispositivo asociado a este sensor',
         error_messages={
             'select': 'Debe seleccionar uno de la lista'
         },
@@ -311,22 +331,12 @@ class Sensor(models.Model):
         Invernadero,
         on_delete=models.SET_NULL,
         verbose_name='Invernadero',
-        help_text='Invernadero al que se asignará este parámetro',
+        help_text='Seleccione el invernadero al que se asignará este sensor',
         error_messages={
             'select': 'Debe seleccionar uno de la lista'
         },
         null=True, 
         blank=True
-    )
-    nombre_sensor = models.CharField(
-        max_length=45,
-        verbose_name='Nombre del sensor',
-        help_text='Ingrese un nombre para este sensor',
-        error_messages={
-            'empty': 'Este campo no debe quedar vacío'
-        },
-        null=True, 
-        blank=False
     )
     is_baja = models.BooleanField(
         verbose_name='¿Está de baja?',
@@ -356,7 +366,7 @@ class Medicion(models.Model):
         Invernadero,
         on_delete=models.SET_NULL,
         verbose_name='Invernadero',
-        help_text='Invernadero al que se le realizó la medición',
+        help_text='Seleccione el invernadero al que se le realizó la medición',
         error_messages={
             'select': 'Debe seleccionar uno de la lista'
         },
