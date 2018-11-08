@@ -195,53 +195,48 @@ class InvernaderoUpdateView(LoginRequiredMixin, UpdateView):
 class ParametroUpdateView(LoginRequiredMixin, UpdateView):
     model = Parametro
     template_name = 'invernaderos/editForm.html'
-    fields = (
-        'id_parametro',
+    fields = [
         'id_invernadero',
         'nombre_parametro',
         'magnitud_referencia'
-    )
+    ]
 
 
 class ActuadorUpdateView(LoginRequiredMixin, UpdateView):
     model = Actuador
     template_name = 'invernaderos/editForm.html'
-    fields = (
-        'id_actuador',
+    fields = [
         'id_dispositivo',
         'id_invernadero',
         'nombre_actuador'
-    )
+    ]
 
 
 class SensorUpdateView(LoginRequiredMixin, UpdateView):
     model = Sensor
     template_name = 'invernaderos/editForm.html'
-    fields = (
-        'id_sensor',
+    fields = [
         'id_dispositivo',
         'id_invernadero',
         'nombre_sensor'
-    )
+    ]
 
 
 class DispositivoUpdateView(LoginRequiredMixin, UpdateView):
     model = Dispositivo
     template_name = 'invernaderos/editForm.html'
-    fields = (
-        'id_dispositivo',
+    fields = [
         'nombre_dispositivo'
-    )
+    ]
 
 
 class CultivoUpdateView(LoginRequiredMixin, UpdateView):
     model = Cultivo
     template_name = 'invernaderos/editForm.html'
-    fields = (
-        'id_cultivo',
+    fields = [
         'nombre_cultivo',
         'periodo_cosecha'
-    )
+    ]
 
 
 class InvernaderoDetailView(LoginRequiredMixin, DetailView):
@@ -269,53 +264,55 @@ class InvernaderoDetailView(LoginRequiredMixin, DetailView):
 class ParametroDetailView(LoginRequiredMixin, DetailView):
     model = Parametro
     template_name = 'invernaderos/viewForm.html'
-    fields = (
+    fields = [
         'id_parametro',
         'id_invernadero',
         'nombre_parametro',
         'magnitud_referencia'
-    )
+    ]
 
 
 class ActuadorDetailView(LoginRequiredMixin, DetailView):
     model = Actuador
     template_name = 'invernaderos/viewForm.html'
-    fields = (
+    fields = [
         'id_actuador',
         'id_dispositivo',
         'id_invernadero',
         'nombre_actuador'
-    )
+    ]
+    context_object_name = 'object'
 
 
 class SensorDetailView(LoginRequiredMixin, DetailView):
     model = Sensor
     template_name = 'invernaderos/viewForm.html'
-    fields = (
+    fields = [
         'id_sensor',
         'id_dispositivo',
         'id_invernadero',
         'nombre_sensor'
-    )
+    ]
+    context_object_name = 'object'
 
 
 class DispositivoDetailView(LoginRequiredMixin, DetailView):
     model = Dispositivo
     template_name = 'invernaderos/viewForm.html'
-    fields = (
+    fields = [
         'id_dispositivo',
         'nombre_dispositivo'
-    )
+    ]
 
 
 class CultivoDetailView(LoginRequiredMixin, DetailView):
     model = Cultivo
     template_name = 'invernaderos/viewForm.html'
-    fields = (
+    fields = [
         'id_cultivo',
         'nombre_cultivo',
         'periodo_cosecha'
-    )
+    ]
 
 
 class InvernaderoCreateView(LoginRequiredMixin, CreateView):
@@ -339,52 +336,52 @@ class ParametroCreateView(LoginRequiredMixin, CreateView):
     model = Parametro
     template_name = 'invernaderos/editForm.html'
     success_url = '/parametros/'
-    fields = (
+    fields = [
         'id_invernadero',
         'nombre_parametro',
         'magnitud_referencia'
-    )
+    ]
 
 
 class ActuadorCreateView(LoginRequiredMixin, CreateView):
     model = Actuador
     success_url = '/actuadores/'
     template_name = 'invernaderos/editForm.html'
-    fields = (
+    fields = [
         'id_dispositivo',
         'id_invernadero',
         'nombre_actuador'
-    )
+    ]
 
 
 class SensorCreateView(LoginRequiredMixin, CreateView):
     model = Sensor
     success_url = '/sensores/'
     template_name = 'invernaderos/editForm.html'
-    fields = (
+    fields = [
         'id_dispositivo',
         'id_invernadero',
         'nombre_sensor'
-    )
+    ]
 
 
 class DispositivoCreateView(LoginRequiredMixin, CreateView):
     model = Dispositivo
     success_url = '/dispositivos/'
     template_name = 'invernaderos/editForm.html'
-    fields = (
+    fields = [
         'nombre_dispositivo'
-    )
+    ]
 
 
 class CultivoCreateView(LoginRequiredMixin, CreateView):
     model = Cultivo
     success_url = '/cultivos/'
     template_name = 'invernaderos/editForm.html'
-    fields = (
+    fields = [
         'nombre_cultivo',
         'periodo_cosecha'
-    )
+    ]
 
 
 @login_required()

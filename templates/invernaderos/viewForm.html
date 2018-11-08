@@ -67,34 +67,30 @@
             <form action="" method="POST" disabled>
                 {% csrf_token %}
                 <div class="form-group">
-                  <label class="control-label sr-only bold" for="id_id_dispositivo">Dispositivo</label>
+                  <label class="control-label bold" for="id_id_dispositivo">Dispositivo</label>
                   <select name="id_dispositivo" class=" form-control" id="id_id_dispositivo">
                     <option value="" disabled selected>{{ invernadero.invernadero.id_dispositivo }}</option>
                   </select>
                   <p class="help-block">{{invernadero.invernadero.help_text}}</p>
                 </div>
                 <div class="form-group">
-                  <label class="control-label sr-only bold" for="id_id_usuario">Usuario</label>
+                  <label class="control-label bold" for="id_id_usuario">Usuario</label>
                   <select name="id_usuario" class=" form-control" id="id_id_usuario">
                     <option value="" disabled selected>{{ invernadero.invernadero.id_usuario }}</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="" class="control-label sr-only bold">
-                    
+                  <label for="" class="control-label bold">
+                    Cultivos
                   </label>
                   <select name="id_cultivo" class=" form-control" id="id_id_cultivo" multiple="" disabled>
-                    <option value="1" selected="">Chile de árbol</option>
-                    <option value="3">Maiz</option>
-                    <option value="2" selected="">Tomate</option>                  
-                    <option value="4">Tomate Cascade Early</option>                
-                    <option value="6">Tomate Delicious Supersteak</option>                  
-                    <option value="5">Tomate Early Girl</option>
+                    {% for cultivo in invernadero.id_cultivo %}
+                      <option value="{{ cultivo.id_cultivo }}" selected="">{{ cultivo.nombre_cultivo }}</option>
+                    {% endfor %}
                   </select>
                 </div>
                 <div class="form-group text-center">
-                    <button class='btn btn-primary' type='button'>Cancelar</button>
-                    <button id='confirmacion' class='btn btn-danger' href='#'>Continuar</button>
+                    <button class='btn btn-secondary' onclick="javascript:history.back()" type='button'>Salir</button>
                 </div>
             </form>
           </div>
