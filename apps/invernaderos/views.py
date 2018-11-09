@@ -279,14 +279,14 @@ class ParametroDetailView(LoginRequiredMixin, DetailView):
 
 class ActuadorDetailView(LoginRequiredMixin, DetailView):
     model = Actuador
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewActuador.html'
     fields = [
         'id_actuador',
         'id_dispositivo',
         'id_invernadero',
         'nombre_actuador'
     ]
-    context_object_name = 'object'
+    context_object_name = 'actuador'
 
 
 class SensorDetailView(LoginRequiredMixin, DetailView):
