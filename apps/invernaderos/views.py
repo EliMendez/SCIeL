@@ -268,7 +268,7 @@ class InvernaderoDetailView(LoginRequiredMixin, DetailView):
 
 class ParametroDetailView(LoginRequiredMixin, DetailView):
     model = Parametro
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewParametro.html'
     fields = [
         'id_parametro',
         'id_invernadero',
@@ -312,7 +312,7 @@ class DispositivoDetailView(LoginRequiredMixin, DetailView):
 
 class CultivoDetailView(LoginRequiredMixin, DetailView):
     model = Cultivo
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewCultivo.html'
     fields = [
         'id_cultivo',
         'nombre_cultivo',
