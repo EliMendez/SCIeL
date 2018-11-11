@@ -206,6 +206,7 @@ class ParametroUpdateView(LoginRequiredMixin, UpdateView):
 class ActuadorUpdateView(LoginRequiredMixin, UpdateView):
     model = Actuador
     template_name = 'invernaderos/editForm.html'
+    success_url = '/actuadores/'
     fields = [
         'id_dispositivo',
         'id_invernadero',
@@ -216,6 +217,7 @@ class ActuadorUpdateView(LoginRequiredMixin, UpdateView):
 class SensorUpdateView(LoginRequiredMixin, UpdateView):
     model = Sensor
     template_name = 'invernaderos/editForm.html'
+    success_url = '/sensores/'
     fields = [
         'id_dispositivo',
         'id_invernadero',
@@ -226,6 +228,7 @@ class SensorUpdateView(LoginRequiredMixin, UpdateView):
 class DispositivoUpdateView(LoginRequiredMixin, UpdateView):
     model = Dispositivo
     template_name = 'invernaderos/editForm.html'
+    success_url = '/dispositivos/'
     fields = [
         'nombre_dispositivo'
     ]
@@ -234,6 +237,7 @@ class DispositivoUpdateView(LoginRequiredMixin, UpdateView):
 class CultivoUpdateView(LoginRequiredMixin, UpdateView):
     model = Cultivo
     template_name = 'invernaderos/editForm.html'
+    success_url = '/cultivos/'
     fields = [
         'nombre_cultivo',
         'periodo_cosecha'
@@ -291,23 +295,24 @@ class ActuadorDetailView(LoginRequiredMixin, DetailView):
 
 class SensorDetailView(LoginRequiredMixin, DetailView):
     model = Sensor
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewSensor.html'
     fields = [
         'id_sensor',
         'id_dispositivo',
         'id_invernadero',
         'nombre_sensor'
     ]
-    context_object_name = 'object'
+    context_object_name = 'sensor'
 
 
 class DispositivoDetailView(LoginRequiredMixin, DetailView):
     model = Dispositivo
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewDispositivo.html'
     fields = [
         'id_dispositivo',
         'nombre_dispositivo'
     ]
+    context_object_name = 'dispositivo'
 
 
 class CultivoDetailView(LoginRequiredMixin, DetailView):
