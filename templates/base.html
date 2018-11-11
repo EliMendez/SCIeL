@@ -83,6 +83,9 @@
                         break;
                 }
             };
+            function redirect(url){
+                location.href = url;
+            }
             function operacion(id, nombre, caso){       
                 console.log("OPERACION: "+caso);
                 header = "Eliminar "+caso+": ";

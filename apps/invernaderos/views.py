@@ -253,17 +253,21 @@ class InvernaderoDetailView(LoginRequiredMixin, DetailView):
     ]
     context_object_name = 'invernadero'
 
-    """def get_context_data(self, **kwargs):
+    def get_queryset(self):
         caso = 'INVERNADERO'
-        id = self.kwargs['pk']
-        invernadero2 = Invernadero.objects.get(id_invernadero=self.kwargs['pk'])
-        invernadero_cultivo = invernadero2.id_cultivo.all()
-        invernadero = {
-            'invernadero': invernadero2,
-            'caso': caso,
-            'cultivo': invernadero_cultivo
-        }
-        return invernadero"""
+        id = self.request.GET['slug']
+        user =  self.request.user
+        query = super(InvernaderoDetailView, self).get_queryset()
+        result =  query.filter(id_invernadero=id)
+        if result and result.id_usuario == user:
+            invernadero = {
+                'invernadero': result,
+                'caso': caso,
+            }
+            return result
+        else:
+            temp = loader.get_template('404.html')
+            return HttpResponse(temp.render({}, self.request))
 
 
 class ParametroDetailView(LoginRequiredMixin, DetailView):
@@ -446,7 +450,6 @@ def monitorear_invernadero(request, id_invernadero):
             }
 
             temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
-            #temp = loader.get_template('404.html')
             
             return HttpResponse(temp.render(context, request))
         else:
@@ -460,29 +463,6 @@ def monitorear_invernadero(request, id_invernadero):
             'fecha': fecha
         }
         return JsonResponse(data=context, safe=True)
-
-def editar_invernadero(request):
-    id_invernadero = request.GET['id']
-    invernadero = get_object_or_404(Invernadero, id_invernadero=id_invernadero)
-    if request.method == 'POST':
-        form =InvernaderoForm(request.POST, instance=invernadero)
-        if form.is_valid():
-            invernadero = form.save(commit=False)
-            invernadero.id_usuario = request.POST['id_usuario']
-            invernadero.save()
-            message = 'Los cambios fueron guardados exitosamente'
-        else:
-            message = 'Algunos campos son inválidos'
-        data = {
-                'message': message
-            }
-        return RFResponse(data)
-    else:
-        form = InvernaderoForm(instance=invernadero)
-    data = {
-        'form': form
-    }
-    return HttpResponse(form)
 
 @login_required(login_url='/sign-in/')
 def invernadero(request, id_invernadero):  
