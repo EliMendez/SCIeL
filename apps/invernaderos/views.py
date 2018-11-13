@@ -277,26 +277,6 @@ class InvernaderoDetailView(LoginRequiredMixin, DetailView):
     ]
     context_object_name = 'invernadero'
 
-    def get_context_data(self, **kwargs):
-        context = {}
-        if self.object:
-            context['object'] = self.object
-            context_object_name = self.get_context_object_name(self.object)
-            if context_object_name:
-                context[context_object_name] = self.object
-        context.update(kwargs)
-        if context:
-            result = context.filter(id_usuario=self.request.user).filter(id_invernadero=self.kwargs['pk'])
-            return super().get_context_data(**context)
-        else:
-            temp = loader.get_template('404.html')
-            return HttpResponseRedirect(temp.render({}, self.request))
-        
-
-    def get_queryset(self):
-        query = super(InvernaderoDetailView, self).get_queryset()
-        return query
-
 
 class ParametroDetailView(LoginRequiredMixin, DetailView):
     model = Parametro
@@ -311,15 +291,14 @@ class ParametroDetailView(LoginRequiredMixin, DetailView):
 
 class ActuadorDetailView(LoginRequiredMixin, DetailView):
     model = Actuador
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewActuador.html'
     fields = [
         'id_actuador',
         'id_dispositivo',
         'id_invernadero',
         'nombre_actuador'
     ]
-    context_object_name = 'object'
-
+    context_object_name = 'actuador'
 
 class SensorDetailView(LoginRequiredMixin, DetailView):
     model = Sensor
