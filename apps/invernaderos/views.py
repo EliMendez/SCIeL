@@ -176,10 +176,13 @@ class ActuadoresListView(LoginRequiredMixin, ListView):
 class PerfilUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     template_name = 'invernaderos/editForm.html'
+    success_url = '/'
     fields = [
+        'username',
         'first_name',
         'last_name',
-        'email'
+        'email',
+        'date_joined'
     ]
 
 
@@ -246,6 +249,19 @@ class CultivoUpdateView(LoginRequiredMixin, UpdateView):
         'nombre_cultivo',
         'periodo_cosecha'
     ]
+
+class PerfilDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'invernaderos/viewPerfil.html'
+    fields = [
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'date_joined',
+        'last_login'
+    ]
+    context_object_name = 'user'
 
 
 class InvernaderoDetailView(LoginRequiredMixin, DetailView):

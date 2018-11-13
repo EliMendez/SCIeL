@@ -13,7 +13,7 @@
             <span>Dispositivos</span>
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item active">
           <a class="nav-link" href="{% url 'invernaderos:sensores' %}">
             <i class="fas fa-fw fa-thermometer-quarter"></i>
             <span>Sensores</span>
@@ -47,7 +47,7 @@
     {% endif %}
   {% endblock sidebar %}
   {% block tables %}
-  {% load bootstrap %}
+    {% load bootstrap %}
     <div id="content-wrapper">
       <div class="container-fluid">
       <!-- Breadcrumbs-->
@@ -67,29 +67,29 @@
             <div class="table-responsive">
               <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <tbody id="bodyTable">
-                    <tr>
-                      <td class="text-right">
+                    <tr class="row">
+                      <td class="text-right col">
                         Identificador
                       </td>
-                      <td class="text-left">{{sensor.id_sensor}}</td>
+                      <td class="text-left col">{{sensor.id_sensor}}</td>
                     </tr>
-                    <tr>
-                      <td class="text-right">
+                    <tr class="row">
+                      <td class="text-right col">
                         Nombre del sensor
                       </td>
-                      <td class="text-left">{{ sensor.nombre_sensor }}</a></td>
+                      <td class="text-left col">{{ sensor.nombre_sensor }}</a></td>
                     </tr>
-                    <tr>
-                      <td class="text-right">
+                    <tr class="row">
+                      <td class="text-right col">
                         Dispositivo
                       </td>
-                      <td class="text-left">{{ sensor.id_dispositivo }}</td>
+                      <td class="text-left col">{{ sensor.id_dispositivo }}</td>
                     </tr>
-                    <tr>
-                      <td class="text-right">
+                    <tr class="row">
+                      <td class="text-right col">
                           Invernadero
                       </td>
-                      <td class="text-left">{{ sensor.id_invernadero }}</a></td>  
+                      <td class="text-left col">{{ sensor.id_invernadero }}</a></td>  
                     </tr>
                 </tbody>
               </table>

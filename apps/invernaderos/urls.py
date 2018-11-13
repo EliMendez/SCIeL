@@ -173,8 +173,13 @@ urlpatterns = [
         name='ajax-parametro'
     ),
     re_path(
-        r'$/perfil/<slug:pk>/',
+        r'detalle/perfil/(?P<pk>[0-9]+)/$',
+        views.PerfilDetailView.as_view(),
+        name='perfil-detalle'
+    ),
+    re_path(
+        r'edicion/perfil/(?P<pk>[0-9]+)/$',
         views.PerfilUpdateView.as_view(),
-        name='perfil'
+        name='perfil-edicion'
     )
 ]
