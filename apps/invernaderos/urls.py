@@ -172,9 +172,9 @@ urlpatterns = [
         views.parametro,
         name='ajax-parametro'
     ),
-    path(
-        'perfil/<slug:pk>/',
-        views.PerfilUpdateView.as_view(template_name = 'invernaderos/view&edit.html'),
+    re_path(
+        r'$/perfil/<slug:pk>/',
+        views.PerfilUpdateView.as_view(),
         name='perfil'
     )
 ]

@@ -49,12 +49,6 @@ class SignOutView(LoginRequiredMixin, LogoutView):
     template_name = 'invernaderos/iniciarSesion.html'
 
 
-class PerfilUpdateView(LoginRequiredMixin, FormView):
-    form_class = UserUpdateForm
-    template_name = 'invernaderos/editarPerfil.html'
-    context_object_name = 'user'
-
-
 class InvernaderosListView(LoginRequiredMixin, ListView):
     model = Invernadero
     template_name = 'invernaderos/gestionarInvernaderos.html'
@@ -179,6 +173,16 @@ class ActuadoresListView(LoginRequiredMixin, ListView):
         return context
 
 
+class PerfilUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'invernaderos/editForm.html'
+    fields = [
+        'first_name',
+        'last_name',
+        'email'
+    ]
+
+
 class InvernaderoUpdateView(LoginRequiredMixin, UpdateView):
     model = Invernadero
     template_name = 'invernaderos/editForm.html'
@@ -257,21 +261,25 @@ class InvernaderoDetailView(LoginRequiredMixin, DetailView):
     ]
     context_object_name = 'invernadero'
 
-    def get_queryset(self):
-        caso = 'INVERNADERO'
-        id = self.request.GET['slug']
-        user =  self.request.user
-        query = super(InvernaderoDetailView, self).get_queryset()
-        result =  query.filter(id_invernadero=id)
-        if result and result.id_usuario == user:
-            invernadero = {
-                'invernadero': result,
-                'caso': caso,
-            }
-            return result
+    def get_context_data(self, **kwargs):
+        context = {}
+        if self.object:
+            context['object'] = self.object
+            context_object_name = self.get_context_object_name(self.object)
+            if context_object_name:
+                context[context_object_name] = self.object
+        context.update(kwargs)
+        if context:
+            result = context.filter(id_usuario=self.request.user).filter(id_invernadero=self.kwargs['pk'])
+            return super().get_context_data(**context)
         else:
             temp = loader.get_template('404.html')
-            return HttpResponse(temp.render({}, self.request))
+            return HttpResponseRedirect(temp.render({}, self.request))
+        
+
+    def get_queryset(self):
+        query = super(InvernaderoDetailView, self).get_queryset()
+        return query
 
 
 class ParametroDetailView(LoginRequiredMixin, DetailView):
