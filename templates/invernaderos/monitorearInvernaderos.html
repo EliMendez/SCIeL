@@ -160,7 +160,27 @@
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-chart-area"></i>
+              Diagrama (Humedad en Aire Vs. Tiempo)
+            </div>
+            <div class="card-body">
+              <canvas id="humedadAireChart" width="100%" height="30"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: {{fecha}}</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-chart-area"></i>
               Diagrama (Temperatura Vs. Tiempo)
+            </div>
+            <div class="card-body">
+              <canvas id="myAreaChart" width="100%" height="30"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: {{fecha}}</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-chart-area"></i>
+              Diagrama (Humedad en el Suelo Vs. Tiempo)
             </div>
             <div class="card-body">
               <canvas id="myAreaChart" width="100%" height="30"></canvas>
@@ -169,6 +189,62 @@
           </div>
         {% endblock charts %}
         {% block tables %}
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>
+              Humedad del Aire dentro del Invernadero
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead class="text-center">
+                    <tr>
+                      <th>Identificador</th>
+                      <th>Invernadero</th>
+                      <th>Parametro</th>
+                      <th>Sensor</th>
+                      <th>Actuador</th>
+                      <th>Magnitud</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>¿El actuador está activo?</th>
+                    </tr>
+                  </thead>
+                  <tfoot class="table table-bordered">
+                    <tr>
+                      <th>Identificador</th>
+                      <th>Invernadero</th>
+                      <th>Parametro</th>
+                      <th>Sensor</th>
+                      <th>Actuador</th>
+                      <th>Magnitud</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>¿El actuador está activo?</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    
+                      {% for humedad_relativa in humedades_relativas %}
+                      <tr>
+                        <td class="text-center">{{ humedad_relativa.id_medicion }}</td>
+                        <td>{{ humedad_relativa.id_invernadero }}</td>
+                        <td>{{ humedad_relativa.id_parametro }}</td>
+                        <td>{{ humedad_relativa.id_sensor }}</td>
+                        <td>{{ humedad_relativa.id_actuador }}</td>
+                        <td class="text-center">{{ humedad_relativa.magnitud_medicion }}</td>
+                        <td class="text-center">{{ humedad_relativa.fecha_medicion|date:"d/m/y" }}</td>
+                        <td class="text-center">{{ humedad_relativa.fecha_medicion|date:"h:i:s A" }}</td>
+                        <td class="text-center">{{ humedad_relativa.is_activo }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: {{fecha}}</div>
+          </div>
           <!-- DataTables Example -->
           <div class="card mb-3">
             <div class="card-header">
@@ -187,6 +263,7 @@
                       <th>Actuador</th>
                       <th>Magnitud</th>
                       <th>Fecha</th>
+                      <th>Hora</th>
                       <th>¿El actuador está activo?</th>
                     </tr>
                   </thead>
@@ -199,19 +276,80 @@
                       <th>Actuador</th>
                       <th>Magnitud</th>
                       <th>Fecha</th>
+                      <th>Hora</th>
                       <th>¿El actuador está activo?</th>
                     </tr>
                   </tfoot>
                   <tbody>
-                    {% for medicion in mediciones %}
-                      <th class="text-center">{{ medicion.id_medicion }}</th>
-                      <th>{{ medicion.id_invernadero }}</th>
-                      <th>{{ medicion.id_parametro }}</th>
-                      <th>{{ medicion.id_sensor }}</th>
-                      <th>{{ medicion.id_actuador }}</th>
-                      <th class="text-center">{{ medicion.magnitud_medicion }}</th>
-                      <th class="text-center">{{ medicion.fecha_medicion|date:"d/m/y | h:i:s A" }}</th>
-                      <th class="text-center">{{ medicion.is_activo }}</th>
+                    
+                      {% for temperatura in temperaturas %}
+                      <tr>
+                        <td class="text-center">{{ temperatura.id_medicion }}</td>
+                        <td>{{ temperatura.id_invernadero }}</td>
+                        <td>{{ temperatura.id_parametro }}</td>
+                        <td>{{ temperatura.id_sensor }}</td>
+                        <td>{{ temperatura.id_actuador }}</td>
+                        <td class="text-center">{{ temperatura.magnitud_medicion }}</td>
+                        <td class="text-center">{{ temperatura.fecha_medicion|date:"d/m/y" }}</td>
+                        <td class="text-center">{{ temperatura.fecha_medicion|date:"h:i:s A" }}</td>
+                        <td class="text-center">{{ temperatura.is_activo }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: {{fecha}}</div>
+          </div>
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>
+              Humedad del Suelo dentro del Invernadero
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead class="text-center">
+                    <tr>
+                      <th>Identificador</th>
+                      <th>Invernadero</th>
+                      <th>Parametro</th>
+                      <th>Sensor</th>
+                      <th>Actuador</th>
+                      <th>Magnitud</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>¿El actuador está activo?</th>
+                    </tr>
+                  </thead>
+                  <tfoot class="table table-bordered">
+                    <tr>
+                      <th>Identificador</th>
+                      <th>Invernadero</th>
+                      <th>Parametro</th>
+                      <th>Sensor</th>
+                      <th>Actuador</th>
+                      <th>Magnitud</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>¿El actuador está activo?</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    
+                      {% for humedad_suelo in humedades_suelo %}
+                      <tr>
+                        <td class="text-center">{{ humedad_suelo.id_medicion }}</td>
+                        <td>{{ humedad_suelo.id_invernadero }}</td>
+                        <td>{{ humedad_suelo.id_parametro }}</td>
+                        <td>{{ humedad_suelo.id_sensor }}</td>
+                        <td>{{ humedad_suelo.id_actuador }}</td>
+                        <td class="text-center">{{ humedad_suelo.magnitud_medicion }}</td>
+                        <td class="text-center">{{ humedad_suelo.fecha_medicion|date:"d/m/y" }}</td>
+                        <td class="text-center">{{ humedad_suelo.fecha_medicion|date:"h:i:s A" }}</td>
+                        <td class="text-center">{{ humedad_suelo.is_activo }}</td>
+                      </tr>
                     {% endfor %}
                   </tbody>
                 </table>
@@ -220,6 +358,7 @@
             <div class="card-footer small text-muted">Ultima actualización: {{fecha}}</div>
           </div>
         {% endblock tables %}
+
         </div>
         <!-- /.container-fluid -->
         <!-- Sticky Footer -->
@@ -231,4 +370,59 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
+    <script type="text/javascript">
+      Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+      Chart.defaults.global.defaultFontColor = '#292b2c';
+
+      // Area Chart Example
+      var ctx = document.getElementById("myAreaChart");
+      var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["Mar 1", "Mar 2", "Mar 3", "Mar 4", "Mar 5", "Mar 6", "Mar 7", "Mar 8", "Mar 9", "Mar 10", "Mar 11", "Mar 12", "Mar 13"],
+          datasets: [{
+            label: "Sessions",
+            lineTension: 0.3,
+            backgroundColor: "rgba(2,117,216,0.2)",
+            borderColor: "rgba(2,117,216,1)",
+            pointRadius: 5,
+            pointBackgroundColor: "rgba(2,117,216,1)",
+            pointBorderColor: "rgba(255,255,255,0.8)",
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(2,117,216,1)",
+            pointHitRadius: 50,
+            pointBorderWidth: 2,
+            data: [10000, 30162, 26263, 18394, 18287, 28682, 31274, 33259, 25849, 24159, 32651, 31984, 38451],
+          }],
+        },
+        options: {
+          scales: {
+            xAxes: [{
+              time: {
+                unit: 'date'
+              },
+              gridLines: {
+                display: false
+              },
+              ticks: {
+                maxTicksLimit: 7
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                min: 0,
+                max: 40000,
+                maxTicksLimit: 5
+              },
+              gridLines: {
+                color: "rgba(0, 0, 0, .125)",
+              }
+            }],
+          },
+          legend: {
+            display: false
+          }
+        }
+      });
+    </script>
 {% endblock content %}

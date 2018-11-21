@@ -439,11 +439,13 @@ def monitorear_invernadero(request, id_invernadero):
                 result = parametros.filter(id_invernadero=invernadero.id_invernadero)
                 for parametro in result:
                     datos.append(parametro)
+
             cant_parametros = len(datos)
                 
             cant_cultivos = Cultivo.objects.all().filter(id_usuario=user.id).filter(is_baja=False).count()
 
-            mediciones = Medicion.objects.all().filter(id_invernadero=id_invernadero)[:20]
+            data = get_data(id_invernadero)
+            
             fecha = timezone.now()
                 
             context = {
@@ -453,8 +455,10 @@ def monitorear_invernadero(request, id_invernadero):
                 'cant_actuadores': cant_actuadores,
                 'cant_dispositivos': cant_dispositivos,
                 'cant_invernaderos': cant_invernaderos,
-                'mediciones': mediciones,
-                'fecha': fecha
+                'fecha': fecha,
+                'humedades_suelo': data['humedades_suelo'].magnitud_medicion,
+                'humedades_relativas': data['humedades_relativas'].magnitud_medicion,
+                'temperaturas': data['temperaturas'].magnitud_medicion
             }
 
             temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
@@ -464,13 +468,34 @@ def monitorear_invernadero(request, id_invernadero):
             temp = loader.get_template('404.html')
             return HttpResponse(temp.render({}, request))
     elif request.method == 'RELOAD':
-        mediciones = Medicion.objects.all().filter(id_invernadero=id_invernadero)[:20]
+        data = get_data(id_invernadero)
         fecha = timezone.now()
         context = {
-            'mediciones': mediciones,
-            'fecha': fecha
+            'fecha': fecha,
+            'humedades_relativas': data['humedades_relativas'].magnitud_medicion,
+            'humedades_suelo': data['humedades_suelo'].magnitud_medicion,
+            'temperaturas': data['temperaturas'].magnitud_medicion
         }
         return JsonResponse(data=context, safe=True)
+
+
+def get_data(id_invernadero):            
+    data = {}
+            
+    parametros = Parametro.objects.filter(id_invernadero=id_invernadero)
+
+    for parametro in parametros:
+        if parametro.nombre_parametro.upper() == 'HUMEDAD DEL AIRE':
+            humedades_relativas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            data['humedades_relativas'] = humedades_relativas
+        elif parametro.nombre_parametro.upper() == 'HUMEDAD DEL SUELO':
+            humedades_suelo = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            data['humedades_suelo'] = humedades_suelo
+        elif parametro.nombre_parametro.upper() == 'TEMPERATURA':
+            temperaturas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            data['temperaturas'] = temperaturas
+    return data
+
 
 @login_required(login_url='/sign-in/')
 def invernadero(request, id_invernadero):  

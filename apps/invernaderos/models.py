@@ -182,7 +182,7 @@ class Parametro(models.Model):
         }
     )
     nombre_parametro = models.CharField(
-        max_length=45,
+        max_length=50,
         verbose_name='Nombre del parámetro',
         help_text='Ingrese el nombre del parámetro a medir',
         error_messages={
@@ -437,7 +437,6 @@ class Medicion(models.Model):
         error_messages={
             'value': 'Debe ser un atributo boleano'
         },
-        null=True, 
         blank=False
     )
 
