@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'sciel.urls'
+ROOT_URLCONF = 'SCIeL.urls'
 
 TEMPLATES = [
     {
@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'sciel.wsgi.application'
+WSGI_APPLICATION = 'SCIeL.wsgi.application'
 
 
 # Database
