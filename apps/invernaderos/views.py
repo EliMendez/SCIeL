@@ -456,9 +456,9 @@ def monitorear_invernadero(request, id_invernadero):
                 'cant_dispositivos': cant_dispositivos,
                 'cant_invernaderos': cant_invernaderos,
                 'fecha': fecha,
-                'humedades_suelo': data['humedades_suelo'].magnitud_medicion,
-                'humedades_relativas': data['humedades_relativas'].magnitud_medicion,
-                'temperaturas': data['temperaturas'].magnitud_medicion
+                'humedades_suelo': data['humedades_suelo'],
+                'humedades_relativas': data['humedades_relativas'],
+                'temperaturas': data['temperaturas']
             }
 
             temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
@@ -472,9 +472,9 @@ def monitorear_invernadero(request, id_invernadero):
         fecha = timezone.now()
         context = {
             'fecha': fecha,
-            'humedades_relativas': data['humedades_relativas'].magnitud_medicion,
-            'humedades_suelo': data['humedades_suelo'].magnitud_medicion,
-            'temperaturas': data['temperaturas'].magnitud_medicion
+            'humedades_relativas': data['humedades_relativas'],
+            'humedades_suelo': data['humedades_suelo'],
+            'temperaturas': data['temperaturas']
         }
         return JsonResponse(data=context, safe=True)
 
