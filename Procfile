@@ -1,1 +1,1 @@
-web: gunicorn sciel.wsgi --log-file -
+web: gunicorn SCIeL.wsgi --log-file -
