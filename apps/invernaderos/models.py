@@ -430,14 +430,13 @@ class Medicion(models.Model):
         null=True, 
         blank=False
     )
-    is_activo = models.BooleanField(
+    is_activo = models.NullBooleanField(
         default=False,
         verbose_name='¿Está activo?',
         help_text='Respuesta del dispositivo',
         error_messages={
             'value': 'Debe ser un atributo boleano'
-        },
-        null=True, 
+        }, 
         blank=False
     )
 
