@@ -447,6 +447,8 @@ def monitorear_invernadero(request, id_invernadero):
             data = get_data(id_invernadero)
             
             fecha = timezone.now()
+
+            depure = depure_data(data)
                 
             context = {
                 'cant_cultivos': cant_cultivos,
@@ -456,9 +458,16 @@ def monitorear_invernadero(request, id_invernadero):
                 'cant_dispositivos': cant_dispositivos,
                 'cant_invernaderos': cant_invernaderos,
                 'fecha': fecha,
+                'id_invernadero': id_invernadero,
+                'suelo_magnitud': depure['suelo_magnitud'],
+                'suelo_fecha': depure['suelo_fecha'],
                 'humedades_suelo': data['humedades_suelo'],
+                'relativas_magnitud': depure['relativas_magnitud'],
+                'relativas_fecha': depure['relativas_fecha'],
                 'humedades_relativas': data['humedades_relativas'],
-                'temperaturas': data['temperaturas']
+                'temperaturas': data['temperaturas'],
+                'temp_magnitud': depure['temp_magnitud'],
+                'temp_fecha': depure['temp_fecha']
             }
 
             temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
@@ -467,16 +476,6 @@ def monitorear_invernadero(request, id_invernadero):
         else:
             temp = loader.get_template('404.html')
             return HttpResponse(temp.render({}, request))
-    elif request.method == 'RELOAD':
-        data = get_data(id_invernadero)
-        fecha = timezone.now()
-        context = {
-            'fecha': fecha,
-            'humedades_relativas': data['humedades_relativas'],
-            'humedades_suelo': data['humedades_suelo'],
-            'temperaturas': data['temperaturas']
-        }
-        return JsonResponse(data=context, safe=True)
 
 
 def get_data(id_invernadero):            
@@ -496,6 +495,47 @@ def get_data(id_invernadero):
             data['temperaturas'] = temperaturas
     return data
 
+def depure_data(data):
+    depure = {
+        'relativas_magnitud': [],
+        'relativas_fecha': [],
+        'suelo_magnitud': [],
+        'suelo_fecha': [],
+        'temp_magnitud': [],
+        'temp_fecha': []
+    }
+
+    for humedad_relativa in data['humedades_relativas']:
+        depure['relativas_magnitud'].append(float(humedad_relativa.magnitud_medicion))
+        depure['relativas_fecha'].append(str(humedad_relativa.fecha_medicion.strftime('%d/%m/%y %H:%M:%S')))
+    
+    for humedad_suelo in data['humedades_suelo']:
+        depure['suelo_magnitud'].append(float(humedad_suelo.magnitud_medicion))
+        depure['suelo_fecha'].append(str(humedad_suelo.fecha_medicion.strftime('%d/%m/%y %H:%M:%S')))
+    
+    for temp in data['temperaturas']:
+        depure['temp_magnitud'].append(float(temp.magnitud_medicion))
+        depure['temp_fecha'].append(str(temp.fecha_medicion.strftime('%d/%m/%y %H:%M:%S')))
+
+    return depure
+
+@login_required(login_url='/sign-in/')
+def send_data(request):
+    id_invernadero = request.GET['id_invernadero']
+    fecha = timezone.now()
+    data = get_data(id_invernadero)
+    depure = depure_data(data)
+    context = {
+        'fecha': fecha,
+        'suelo_magnitud': depure['suelo_magnitud'],
+        'suelo_fecha': depure['suelo_fecha'],
+        'relativas_magnitud': depure['relativas_magnitud'],
+        'relativas_fecha': depure['relativas_fecha'],
+        'temp_magnitud': depure['temp_magnitud'],
+        'temp_fecha': depure['temp_fecha']
+    }
+            
+    return JsonResponse(data=context)
 
 @login_required(login_url='/sign-in/')
 def invernadero(request, id_invernadero):  

@@ -1,8 +1,0 @@
-*.pyc
-*.pyc
-*.pyc
-*.pyc
-venv/Lib/site-packages/pylint/checkers/__pycache__/refactoring.cpython-36.pyc
-apps/invernaderos/__pycache__/admin.cpython-36.pyc
-*.pyc
-*.sqlite3

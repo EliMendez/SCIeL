@@ -172,6 +172,11 @@ urlpatterns = [
         views.parametro,
         name='ajax-parametro'
     ),
+    path(
+      'ajax/datos/',
+      views.send_data,
+      name='ajax-datos'
+    ),
     re_path(
         r'detalle/perfil/(?P<pk>[0-9]+)/$',
         views.PerfilDetailView.as_view(),

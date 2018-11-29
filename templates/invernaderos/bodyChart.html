@@ -1,0 +1,161 @@
+{% block charts %}
+          <!-- Area Chart Example-->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-chart-area"></i>
+              Diagrama (Humedad en Aire Vs. Tiempo)
+            </div>
+            <div class="card-body">
+              <canvas id="humedadAireChart" width="100%" height="30"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: <span class="date">{{fecha}}</span></div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-chart-area"></i>
+              Diagrama (Temperatura Vs. Tiempo)
+            </div>
+            <div class="card-body">
+              <canvas id="temperaturaChart" width="100%" height="30"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: <span class="date">{{fecha}}</span></div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-chart-area"></i>
+              Diagrama (Humedad en el Suelo Vs. Tiempo)
+            </div>
+            <div class="card-body">
+              <canvas id="humedadSueloChart" width="100%" height="30"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: <span class="date">{{fecha}}</span></div>
+          </div>
+        {% endblock charts %}
+        {% block tables %}
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>
+              Humedad del Aire dentro del Invernadero
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead class="text-center">
+                    <tr>
+                      <th>Identificador</th>
+                      <th>Invernadero</th>
+                      <th>Parametro</th>
+                      <th>Sensor</th>
+                      <th>Actuador</th>
+                      <th>Magnitud</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>¿El actuador está activo?</th>
+                    </tr>
+                  </thead>>
+                  <tbody>
+                      {% for humedad_relativa in humedades_relativas %}
+                      <tr>
+                        <td class="text-center">{{ humedad_relativa.id_medicion }}</td>
+                        <td>{{ humedad_relativa.id_invernadero }}</td>
+                        <td>{{ humedad_relativa.id_parametro }}</td>
+                        <td>{{ humedad_relativa.id_sensor }}</td>
+                        <td>{{ humedad_relativa.id_actuador }}</td>
+                        <td class="text-center">{{ humedad_relativa.magnitud_medicion }}</td>
+                        <td class="text-center">{{ humedad_relativa.fecha_medicion|date:"d/m/y" }}</td>
+                        <td class="text-center">{{ humedad_relativa.fecha_medicion|date:"h:i:s A" }}</td>
+                        <td class="text-center">{{ humedad_relativa.is_activo }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: <span class="date">{{fecha}}</span></div>
+          </div>
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>
+              Temperatura dentro del Invernadero
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead class="text-center">
+                    <tr>
+                      <th>Identificador</th>
+                      <th>Invernadero</th>
+                      <th>Parametro</th>
+                      <th>Sensor</th>
+                      <th>Actuador</th>
+                      <th>Magnitud</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>¿El actuador está activo?</th>
+                    </tr>
+                  </thead>
+                  <tbody>                    
+                    {% for temperatura in temperaturas %}
+                      <tr>
+                        <td class="text-center">{{ temperatura.id_medicion }}</td>
+                        <td>{{ temperatura.id_invernadero }}</td>
+                        <td>{{ temperatura.id_parametro }}</td>
+                        <td>{{ temperatura.id_sensor }}</td>
+                        <td>{{ temperatura.id_actuador }}</td>
+                        <td class="text-center">{{ temperatura.magnitud_medicion }}</td>
+                        <td class="text-center">{{ temperatura.fecha_medicion|date:"d/m/y" }}</td>
+                        <td class="text-center">{{ temperatura.fecha_medicion|date:"h:i:s A" }}</td>
+                        <td class="text-center">{{ temperatura.is_activo }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: <span class="date">{{fecha}}</span></div>
+          </div>
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>
+              Humedad del Suelo dentro del Invernadero
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead class="text-center">
+                    <tr>
+                      <th>Identificador</th>
+                      <th>Invernadero</th>
+                      <th>Parametro</th>
+                      <th>Sensor</th>
+                      <th>Actuador</th>
+                      <th>Magnitud</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>¿El actuador está activo?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for humedad_suelo in humedades_suelo %}
+                      <tr>
+                        <td class="text-center">{{ humedad_suelo.id_medicion }}</td>
+                        <td>{{ humedad_suelo.id_invernadero }}</td>
+                        <td>{{ humedad_suelo.id_parametro }}</td>
+                        <td>{{ humedad_suelo.id_sensor }}</td>
+                        <td>{{ humedad_suelo.id_actuador }}</td>
+                        <td class="text-center">{{ humedad_suelo.magnitud_medicion }}</td>
+                        <td class="text-center">{{ humedad_suelo.fecha_medicion|date:"d/m/y" }}</td>
+                        <td class="text-center">{{ humedad_suelo.fecha_medicion|date:"h:i:s A" }}</td>
+                        <td class="text-center">{{ humedad_suelo.is_activo }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Ultima actualización: <span class="date">{{fecha}}</span></div>
+          </div>
+        {% endblock tables %}
