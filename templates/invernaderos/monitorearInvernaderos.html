@@ -2,48 +2,49 @@
 {% block title %}SCIeL - Monitorear Invernaderos{% endblock title %}
 
 {% block content %}
+    
   {% block sidebar %}
-    {% if user.is_authenticated %}
-      <!-- Sidebar -->
-      <ul class="sidebar navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'invernaderos:dispositivos' %}">
-            <i class="fas fa-fw fa-cubes"></i>
-            <span>Dispositivos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'invernaderos:sensores' %}">
-            <i class="fas fa-fw fa-thermometer-quarter"></i>
-            <span>Sensores</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'invernaderos:actuadores' %}">
-            <i class="fas fa-fw fa-wrench"></i>
+  {% if user.is_authenticated %}
+    <!-- Sidebar -->
+    <ul class="sidebar navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:dispositivos' %}">
+          <i class="fas fa-fw fa-cubes"></i>
+          <span>Dispositivos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:sensores' %}">
+          <i class="fas fa-fw fa-thermometer-quarter"></i>
+          <span>Sensores</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:actuadores' %}">
+          <i class="fas fa-fw fa-wrench"></i>
             <span>Actuadores</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'invernaderos:invernaderos' %}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Invernaderos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'invernaderos:cultivos' %}">
-            <i class="fas fa-fw fa-leaf"></i>
-            <span>Cultivos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'invernaderos:parametros' %}">
-            <i class="fas fa-fw fa-cogs"></i>
-            <span>Parámetros Estándar</span>
-          </a>
-        </li>
-      </ul>
-    {% endif %}
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'invernaderos:invernaderos' %}">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Invernaderos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:cultivos' %}">
+          <i class="fas fa-fw fa-leaf"></i>
+          <span>Cultivos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:parametros' %}">
+          <i class="fas fa-fw fa-cogs"></i>
+          <span>Parámetros Estándar</span>
+        </a>
+      </li>
+    </ul>
+  {% endif %}
   {% endblock sidebar %}
   <div id="content-wrapper">
       <div class="container-fluid">
@@ -154,71 +155,10 @@
           </div>
         </div>
 
-        {% block charts %}
-          <!-- Area Chart Example-->
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fas fa-chart-area"></i>
-              Diagrama (Temperatura Vs. Tiempo)
-            </div>
-            <div class="card-body">
-              <canvas id="myAreaChart" width="100%" height="30"></canvas>
-            </div>
-            <div class="card-footer small text-muted">Ultima actualización: {{fecha}}</div>
-          </div>
-        {% endblock charts %}
-        {% block tables %}
-          <!-- DataTables Example -->
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fas fa-table"></i>
-              Temperatura dentro del Invernadero
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead class="text-center">
-                    <tr>
-                      <th>Identificador</th>
-                      <th>Invernadero</th>
-                      <th>Parametro</th>
-                      <th>Sensor</th>
-                      <th>Actuador</th>
-                      <th>Magnitud</th>
-                      <th>Fecha</th>
-                      <th>¿El actuador está activo?</th>
-                    </tr>
-                  </thead>
-                  <tfoot class="table table-bordered">
-                    <tr>
-                      <th>Identificador</th>
-                      <th>Invernadero</th>
-                      <th>Parametro</th>
-                      <th>Sensor</th>
-                      <th>Actuador</th>
-                      <th>Magnitud</th>
-                      <th>Fecha</th>
-                      <th>¿El actuador está activo?</th>
-                    </tr>
-                  </tfoot>
-                  <tbody>
-                    {% for medicion in mediciones %}
-                      <th class="text-center">{{ medicion.id_medicion }}</th>
-                      <th>{{ medicion.id_invernadero }}</th>
-                      <th>{{ medicion.id_parametro }}</th>
-                      <th>{{ medicion.id_sensor }}</th>
-                      <th>{{ medicion.id_actuador }}</th>
-                      <th class="text-center">{{ medicion.magnitud_medicion }}</th>
-                      <th class="text-center">{{ medicion.fecha_medicion|date:"d/m/y | h:i:s A" }}</th>
-                      <th class="text-center">{{ medicion.is_activo }}</th>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="card-footer small text-muted">Ultima actualización: {{fecha}}</div>
-          </div>
-        {% endblock tables %}
+        <div id="bodyChart">
+          {% include 'invernaderos/bodyChart.html' %}
+        </div>
+
         </div>
         <!-- /.container-fluid -->
         <!-- Sticky Footer -->
@@ -230,4 +170,108 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
+
+    <script>
+      
+      var lb1 = []
+      var data1 = []
+      var lb2 = []
+      var data2 = []
+      var lb3 = []
+      var data3 = []
+      
+      window.onload=function(){
+        /*data = {{ suelo_magnitud }};
+        console.log({{ suelo_fecha }});
+        lbl = {{ suelo_fecha }};
+        loadChart("humedadSueloChart", data, lbl)
+        data = {{ relativas_magnitud }};
+        lbl = {{ relativas_fecha }};
+        loadChart("humedadAireChart", data, lbl)
+        data = {{ temp_magnitud }};
+        lbl = {{ temp_fecha }};
+        loadChart("temperaturaChart", data, lbl)*/
+      }
+
+      function loadChart(idCanvas, data, lbl){
+          var ctx = document.getElementById(idCanvas).getContext('2d');
+          var myLineChart = new Chart(
+            ctx, 
+            {
+              type: 'line',
+              data: {
+                labels: lbl,
+                datasets: [{
+                  data: data,
+                  backgroundColor: "rgba(2,117,216,0.2)",
+                  borderColor: "rgba(2,117,216,1)",
+                  pointRadius: 5,
+                  pointBackgroundColor: "rgba(2,117,216,1)",
+                  pointBorderColor: "rgba(255,255,255,0.8)",
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: "rgba(2,117,216,1)",
+                  pointHitRadius: 50,
+                  pointBorderWidth: 2,
+                }]
+              },
+              options: {
+                scales: {
+                  xAxes: [{
+                    time: {
+                      unit: 'date'
+                    },
+                    gridLines: {
+                      display: false
+                    },
+                    ticks: {
+                      maxTicksLimit: 7
+                    }
+                  }],
+                  yAxes: [{
+                    ticks: {
+                      min: 0,
+                      maxTicksLimit: 5
+                    },
+                    gridLines: {
+                      color: "rgba(0, 0, 0, .125)",
+                    }
+                  }],
+                },
+                legend: {
+                  display: false
+                }
+              }
+          })
+        }
+
+      setInterval(function (){
+        console.log("Iniciando");
+        $.ajax({
+          url: "{% url 'invernaderos:ajax-datos' %}",
+          type: 'GET',
+          data: {
+            'id_invernadero': {{ id_invernadero }}
+          },
+          success: function(data){
+            console.log(data);
+            console.log("SUCCES");
+          },
+          dataType: 'json'
+        }).done(function(data) {
+          loadChart("humedadAireChart", data.relativas_magnitud, data.relativas_fecha);
+          loadChart("humedadSueloChart", data.suelo_magnitud, data.suelo_fecha);
+          loadChart("temperaturaChart", data.temp_magnitud, data.temp_fecha);
+          $(".data").empty();
+          $(".data").append(data.fecha+9)
+        }).fail(function() {
+          console.log("error");
+        }).always(function() {
+          console.log("complete");
+        });
+        console.log("Terminando");
+      }, 5000);
+      
+    </script>
 {% endblock content %}
+{% block script %}
+{% endblock script %}

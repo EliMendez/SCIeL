@@ -1,43 +1,47 @@
 {% extends "header&footer.html" %}
 {% block title %}SCIeL | Iniciar Sesión{% endblock %}
 {% block content %}
+  {% block sidebar %}
+  {% endblock sidebar %}
   {% load static from staticfiles  %}
-  <header class="py-2 mx-auto" style="background-image: url('/static/media/image/CE - UES 3.JPG'); background-size: cover !important; width: 100% !important;">
+  <header class="py-2 mx-auto" style="background-image: url('/static/invernaderos/media/image/CE - UES 3.JPG'); background-size: cover !important; width: 100% !important;">
     <div style="align-content: center !important">
       <div class="card card-login mx-auto bg-dark view overlay" >
         <div class="card-header text-center" style="color:whitesmoke !important;">
           <h3 class="h5">
-            <img class="img-fluid d-block mx-auto mb-4" src="{% static 'media/image/logo2.png' %}" alt="" width="250" height="250" style="padding-top: 0.5rem; padding-bottom: 0.3rem;">
+            <img class="img-fluid d-block mx-auto mb-4" src="{% static 'invernaderos/media/image/logo2.png' %}" alt="" width="250" height="250" style="padding-top: 0.5rem; padding-bottom: 0.3rem;">
             Sistema para el Control de Invernaderos en Línea - SCIeL
           </h3>
           {% if form.message %}
-          <div class="alert alert-danger in alert-dismissible">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>  
-              <p>{{form.message}}</p>
-            </strong>
-          </div>
-        {% endif %}
-      </div>
-      <div class="card-body form-group form-label-group text-center">
-        <strong>
-          <form method="POST" class="form-signup">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="id_username" style="color:lightgray !important;">
-                Nombre de usuario
-              </label>
-              {{ form.username }}
+            <div class="alert alert-danger in alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <strong>  
+                <p>{{form.message}}</p>
+              </strong>
             </div>
-            <div class="form-group">
-              <label for="id_password" style="color:lightgray !important;">
-                Contraseña
-              </label>
-              {{ form.password }}
-            </div>
-            <button class="btn btn-lg btn-primary btn-block" href="{% url 'invernaderos:invernaderos' %}" name="submit" type="submit">Iniciar Sesión</button>
-          </form>
-        </strong>
+          {% endif %}
+        </div>
+        <div class="card-body form-group form-label-group text-center">
+          <strong>
+            {% load bootstrap %}
+            <form method="POST" class="form-signup">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="id_username" style="color:lightgray !important;">
+                  Nombre de usuario
+                </label>
+                {{ form.username }}
+              </div>
+              <div class="form-group">
+                <label for="id_password" style="color:lightgray !important;">
+                  Contraseña
+                </label>
+                {{ form.password }}
+              </div>
+              <button class="btn btn-lg btn-primary btn-block" href="{% url 'invernaderos:invernaderos' %}" name="submit" type="submit">Iniciar Sesión</button>
+            </form>
+          </strong>
+        </div>
       </div>
     </div>      
   </header>

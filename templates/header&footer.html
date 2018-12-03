@@ -8,7 +8,7 @@
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
       <i>
         {% load staticfiles %}
-        <img class="image-circle" style="max-width:120px; margin-top: -7px;" src="{% static 'media/image/logo2.png' %}">
+        <img class="image-circle" style="max-width:120px; margin-top: -7px;" src="{% static 'invernaderos/media/image/logo2.png' %}">
       </i>
       <i class="fas fa-bars" style="margin-left: 10%;"></i>
     </button>
@@ -24,7 +24,8 @@
           {% endif %}
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-          <a class="dropdown-item" href="perfil/{{user.id}}">Perfil</a>
+          <a class="dropdown-item" href="detalle/perfil/{{user.id}}">Ver Perfil</a>
+          <a class="dropdown-item" href="edicion/perfil/{{user.id}}">Modificar Perfil</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Salir</a>
         </div>

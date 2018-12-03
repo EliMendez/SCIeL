@@ -173,8 +173,18 @@ urlpatterns = [
         name='ajax-parametro'
     ),
     path(
-        'perfil/<slug:pk>/',
-        views.PerfilUpdateView.as_view(template_name = 'invernaderos/view&edit.html'),
-        name='perfil'
+      'ajax/datos/',
+      views.send_data,
+      name='ajax-datos'
+    ),
+    re_path(
+        r'detalle/perfil/(?P<pk>[0-9]+)/$',
+        views.PerfilDetailView.as_view(),
+        name='perfil-detalle'
+    ),
+    re_path(
+        r'edicion/perfil/(?P<pk>[0-9]+)/$',
+        views.PerfilUpdateView.as_view(),
+        name='perfil-edicion'
     )
 ]

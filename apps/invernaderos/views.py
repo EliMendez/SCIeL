@@ -49,12 +49,6 @@ class SignOutView(LoginRequiredMixin, LogoutView):
     template_name = 'invernaderos/iniciarSesion.html'
 
 
-class PerfilUpdateView(LoginRequiredMixin, FormView):
-    form_class = UserUpdateForm
-    template_name = 'invernaderos/editarPerfil.html'
-    context_object_name = 'user'
-
-
 class InvernaderosListView(LoginRequiredMixin, ListView):
     model = Invernadero
     template_name = 'invernaderos/gestionarInvernaderos.html'
@@ -179,6 +173,19 @@ class ActuadoresListView(LoginRequiredMixin, ListView):
         return context
 
 
+class PerfilUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'invernaderos/editForm.html'
+    success_url = '/'
+    fields = [
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'date_joined'
+    ]
+
+
 class InvernaderoUpdateView(LoginRequiredMixin, UpdateView):
     model = Invernadero
     template_name = 'invernaderos/editForm.html'
@@ -206,6 +213,7 @@ class ParametroUpdateView(LoginRequiredMixin, UpdateView):
 class ActuadorUpdateView(LoginRequiredMixin, UpdateView):
     model = Actuador
     template_name = 'invernaderos/editForm.html'
+    success_url = '/actuadores/'
     fields = [
         'id_dispositivo',
         'id_invernadero',
@@ -216,6 +224,7 @@ class ActuadorUpdateView(LoginRequiredMixin, UpdateView):
 class SensorUpdateView(LoginRequiredMixin, UpdateView):
     model = Sensor
     template_name = 'invernaderos/editForm.html'
+    success_url = '/sensores/'
     fields = [
         'id_dispositivo',
         'id_invernadero',
@@ -226,6 +235,7 @@ class SensorUpdateView(LoginRequiredMixin, UpdateView):
 class DispositivoUpdateView(LoginRequiredMixin, UpdateView):
     model = Dispositivo
     template_name = 'invernaderos/editForm.html'
+    success_url = '/dispositivos/'
     fields = [
         'nombre_dispositivo'
     ]
@@ -234,10 +244,24 @@ class DispositivoUpdateView(LoginRequiredMixin, UpdateView):
 class CultivoUpdateView(LoginRequiredMixin, UpdateView):
     model = Cultivo
     template_name = 'invernaderos/editForm.html'
+    success_url = '/cultivos/'
     fields = [
         'nombre_cultivo',
         'periodo_cosecha'
     ]
+
+class PerfilDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'invernaderos/viewPerfil.html'
+    fields = [
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'date_joined',
+        'last_login'
+    ]
+    context_object_name = 'user'
 
 
 class InvernaderoDetailView(LoginRequiredMixin, DetailView):
@@ -253,22 +277,10 @@ class InvernaderoDetailView(LoginRequiredMixin, DetailView):
     ]
     context_object_name = 'invernadero'
 
-    """def get_context_data(self, **kwargs):
-        caso = 'INVERNADERO'
-        id = self.kwargs['pk']
-        invernadero2 = Invernadero.objects.get(id_invernadero=self.kwargs['pk'])
-        invernadero_cultivo = invernadero2.id_cultivo.all()
-        invernadero = {
-            'invernadero': invernadero2,
-            'caso': caso,
-            'cultivo': invernadero_cultivo
-        }
-        return invernadero"""
-
 
 class ParametroDetailView(LoginRequiredMixin, DetailView):
     model = Parametro
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewParametro.html'
     fields = [
         'id_parametro',
         'id_invernadero',
@@ -279,40 +291,40 @@ class ParametroDetailView(LoginRequiredMixin, DetailView):
 
 class ActuadorDetailView(LoginRequiredMixin, DetailView):
     model = Actuador
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewActuador.html'
     fields = [
         'id_actuador',
         'id_dispositivo',
         'id_invernadero',
         'nombre_actuador'
     ]
-    context_object_name = 'object'
-
+    context_object_name = 'actuador'
 
 class SensorDetailView(LoginRequiredMixin, DetailView):
     model = Sensor
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewSensor.html'
     fields = [
         'id_sensor',
         'id_dispositivo',
         'id_invernadero',
         'nombre_sensor'
     ]
-    context_object_name = 'object'
+    context_object_name = 'sensor'
 
 
 class DispositivoDetailView(LoginRequiredMixin, DetailView):
     model = Dispositivo
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewDispositivo.html'
     fields = [
         'id_dispositivo',
         'nombre_dispositivo'
     ]
+    context_object_name = 'dispositivo'
 
 
 class CultivoDetailView(LoginRequiredMixin, DetailView):
     model = Cultivo
-    template_name = 'invernaderos/viewForm.html'
+    template_name = 'invernaderos/viewCultivo.html'
     fields = [
         'id_cultivo',
         'nombre_cultivo',
@@ -427,12 +439,16 @@ def monitorear_invernadero(request, id_invernadero):
                 result = parametros.filter(id_invernadero=invernadero.id_invernadero)
                 for parametro in result:
                     datos.append(parametro)
+
             cant_parametros = len(datos)
                 
             cant_cultivos = Cultivo.objects.all().filter(id_usuario=user.id).filter(is_baja=False).count()
 
-            mediciones = Medicion.objects.all().filter(id_invernadero=id_invernadero)[:20]
+            data = get_data(id_invernadero)
+            
             fecha = timezone.now()
+
+            depure = depure_data(data)
                 
             context = {
                 'cant_cultivos': cant_cultivos,
@@ -441,48 +457,85 @@ def monitorear_invernadero(request, id_invernadero):
                 'cant_actuadores': cant_actuadores,
                 'cant_dispositivos': cant_dispositivos,
                 'cant_invernaderos': cant_invernaderos,
-                'mediciones': mediciones,
-                'fecha': fecha
+                'fecha': fecha,
+                'id_invernadero': id_invernadero,
+                'suelo_magnitud': depure['suelo_magnitud'],
+                'suelo_fecha': depure['suelo_fecha'],
+                'humedades_suelo': data['humedades_suelo'],
+                'relativas_magnitud': depure['relativas_magnitud'],
+                'relativas_fecha': depure['relativas_fecha'],
+                'humedades_relativas': data['humedades_relativas'],
+                'temperaturas': data['temperaturas'],
+                'temp_magnitud': depure['temp_magnitud'],
+                'temp_fecha': depure['temp_fecha']
             }
 
             temp = loader.get_template('invernaderos/monitorearInvernaderos.html')
-            #temp = loader.get_template('404.html')
             
             return HttpResponse(temp.render(context, request))
         else:
             temp = loader.get_template('404.html')
             return HttpResponse(temp.render({}, request))
-    elif request.method == 'RELOAD':
-        mediciones = Medicion.objects.all().filter(id_invernadero=id_invernadero)[:20]
-        fecha = timezone.now()
-        context = {
-            'mediciones': mediciones,
-            'fecha': fecha
-        }
-        return JsonResponse(data=context, safe=True)
 
-def editar_invernadero(request):
-    id_invernadero = request.GET['id']
-    invernadero = get_object_or_404(Invernadero, id_invernadero=id_invernadero)
-    if request.method == 'POST':
-        form =InvernaderoForm(request.POST, instance=invernadero)
-        if form.is_valid():
-            invernadero = form.save(commit=False)
-            invernadero.id_usuario = request.POST['id_usuario']
-            invernadero.save()
-            message = 'Los cambios fueron guardados exitosamente'
-        else:
-            message = 'Algunos campos son inválidos'
-        data = {
-                'message': message
-            }
-        return RFResponse(data)
-    else:
-        form = InvernaderoForm(instance=invernadero)
-    data = {
-        'form': form
+
+def get_data(id_invernadero):            
+    data = {}
+            
+    parametros = Parametro.objects.filter(id_invernadero=id_invernadero)
+
+    for parametro in parametros:
+        if parametro.nombre_parametro.upper() == 'HUMEDAD DEL AIRE':
+            humedades_relativas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            data['humedades_relativas'] = humedades_relativas
+        elif parametro.nombre_parametro.upper() == 'HUMEDAD DEL SUELO':
+            humedades_suelo = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            data['humedades_suelo'] = humedades_suelo
+        elif parametro.nombre_parametro.upper() == 'TEMPERATURA':
+            temperaturas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            data['temperaturas'] = temperaturas
+    return data
+
+def depure_data(data):
+    depure = {
+        'relativas_magnitud': [],
+        'relativas_fecha': [],
+        'suelo_magnitud': [],
+        'suelo_fecha': [],
+        'temp_magnitud': [],
+        'temp_fecha': []
     }
-    return HttpResponse(form)
+
+    for humedad_relativa in data['humedades_relativas']:
+        depure['relativas_magnitud'].append(float(humedad_relativa.magnitud_medicion))
+        depure['relativas_fecha'].append(str(humedad_relativa.fecha_medicion.strftime('%d/%m/%y %H:%M:%S')))
+    
+    for humedad_suelo in data['humedades_suelo']:
+        depure['suelo_magnitud'].append(float(humedad_suelo.magnitud_medicion))
+        depure['suelo_fecha'].append(str(humedad_suelo.fecha_medicion.strftime('%d/%m/%y %H:%M:%S')))
+    
+    for temp in data['temperaturas']:
+        depure['temp_magnitud'].append(float(temp.magnitud_medicion))
+        depure['temp_fecha'].append(str(temp.fecha_medicion.strftime('%d/%m/%y %H:%M:%S')))
+
+    return depure
+
+@login_required(login_url='/sign-in/')
+def send_data(request):
+    id_invernadero = request.GET['id_invernadero']
+    fecha = timezone.now()
+    data = get_data(id_invernadero)
+    depure = depure_data(data)
+    context = {
+        'fecha': fecha,
+        'suelo_magnitud': depure['suelo_magnitud'],
+        'suelo_fecha': depure['suelo_fecha'],
+        'relativas_magnitud': depure['relativas_magnitud'],
+        'relativas_fecha': depure['relativas_fecha'],
+        'temp_magnitud': depure['temp_magnitud'],
+        'temp_fecha': depure['temp_fecha']
+    }
+            
+    return JsonResponse(data=context)
 
 @login_required(login_url='/sign-in/')
 def invernadero(request, id_invernadero):  

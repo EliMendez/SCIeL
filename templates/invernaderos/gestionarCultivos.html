@@ -1,7 +1,7 @@
 {% extends "header&footer.html" %}
 {% block title %}SCIeL - Gestión de Cultivos{% endblock %}
 
-{% block content %}
+{% block content %}  
   {% block sidebar %}
     {% if user.is_authenticated %}
       <!-- Sidebar -->
@@ -21,7 +21,7 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'invernaderos:actuadores' %}">
             <i class="fas fa-fw fa-wrench"></i>
-            <span>Actuadores</span>
+              <span>Actuadores</span>
           </a>
         </li>
         <li class="nav-item">

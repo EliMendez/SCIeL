@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '0r59@6vfj!$!xuzm7y(4a&2_j4ph6pve(2pjt2i&5-itlc85r^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -130,15 +130,15 @@ LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/sign-in/'
 
-MEDIA_URL = '/media/'
+#MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static', 'invernaderos', 'media'),
+#STATICFILES_DIRS = [
+ #   os.path.join(BASE_DIR, 'static', 'invernaderos', 'media'),
     
-]
+#]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'invernaderos')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

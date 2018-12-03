@@ -1,0 +1,120 @@
+{% extends "header&footer.html" %}
+{% block title %}SCIeL - Perfil{% endblock%}
+
+{% block content %}
+      
+  {% block sidebar %}
+  {% if user.is_authenticated %}
+    <!-- Sidebar -->
+    <ul class="sidebar navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:dispositivos' %}">
+          <i class="fas fa-fw fa-cubes"></i>
+          <span>Dispositivos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:sensores' %}">
+          <i class="fas fa-fw fa-thermometer-quarter"></i>
+          <span>Sensores</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:actuadores' %}">
+          <i class="fas fa-fw fa-wrench"></i>
+            <span>Actuadores</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:invernaderos' %}">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Invernaderos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:cultivos' %}">
+          <i class="fas fa-fw fa-leaf"></i>
+          <span>Cultivos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'invernaderos:parametros' %}">
+          <i class="fas fa-fw fa-cogs"></i>
+          <span>Parámetros Estándar</span>
+        </a>
+      </li>
+    </ul>
+  {% endif %}
+{% endblock sidebar %}
+{% block tables %}
+{% load bootstrap %}
+  <div id="content-wrapper">
+    <div class="container-fluid">
+    <!-- Breadcrumbs-->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Visualización</a>
+        </li>
+        <li class="breadcrumb-item active">Datos</li>
+      </ol>
+      <!-- DataTables Example -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="fas fa fa-eye"></i>
+          <strong><i> Detalles del usuario: {{ user }}</i></strong>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <tbody id="bodyTable">
+                  <tr class="row">
+                    <td class="text-right col">
+                      Identificador
+                    </td>
+                    <td class="text-left col">{{ user.id }}</td>
+                  </tr>
+                  <tr class="row">
+                    <td class="text-right col">
+                      Nombres
+                    </td>
+                    <td class="text-left col">{{ user.first_name }}</a></td>
+                  </tr>
+                  <tr class="row">
+                    <td class="text-right col">
+                      Apellidos
+                    </td>
+                    <td class="text-left col">{{ user.last_name }}</td>
+                  </tr>
+                  <tr class="row">
+                    <td class="text-right col">
+                        Correo Electrónico
+                    </td>
+                    <td class="text-left col">{{ user.email }}</a></td>  
+                  </tr>
+                  <tr class="row">
+                    <td class="text-right col">
+                      Fecha de alta
+                    </td>
+                    <td class="text-left col">{{ user.date_joined }}</td>
+                  </tr>
+                  <tr class="row">
+                    <td class="text-right col">
+                      Ultimo inicio de sesión
+                    </td>
+                    <td class="text-left col">{{ user.last_login }}</a></td>  
+                  </tr>
+              </tbody>
+            </table>
+            <div class="row">
+              <div class="col-12 form-group text-center">
+                <br>
+                <button class='btn btn-primary' onclick="javascript:history.back()" style="width: 75%;" type='button'>Salir</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    {% endblock tables %}
+{% endblock content %}
