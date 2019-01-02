@@ -436,11 +436,7 @@ class Medicion(models.Model):
         help_text='Respuesta del dispositivo',
         error_messages={
             'value': 'Debe ser un atributo boleano'
-<<<<<<< HEAD
-        }, 
-=======
         },
->>>>>>> a8e8381b0dd7d2c27909bcda4e2c0c829b4cf7df
         blank=False
     )
 
