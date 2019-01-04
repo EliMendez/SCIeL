@@ -3,6 +3,15 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.pyc
+<<<<<<< HEAD
+*.pyc
+*.pyc
+*.pyc
+venv/Lib/site-packages/pylint/checkers/__pycache__/refactoring.cpython-36.pyc
+apps/invernaderos/__pycache__/admin.cpython-36.pyc
+*.pyc
+*.sqlite3
+=======
 
 # C extensions
 *.so
@@ -106,3 +115,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+>>>>>>> a8e8381b0dd7d2c27909bcda4e2c0c829b4cf7df
