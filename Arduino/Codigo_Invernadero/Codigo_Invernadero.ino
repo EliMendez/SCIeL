@@ -14,11 +14,11 @@ const int releGoteo = 11;
 const int releRocio = 12;
 const byte ROWS = 4;
 const byte COLS = 4;
-bool riegoGoteo = false, rociador = false;
+bool riegoGoteo = false, rociador = false, estadoActuador;
 int valT, x, y, z, cont, liHs = 0, lsHs = 100, liTemp = 0, lsTemp = 50, liHa = 20, lsHa = 95;
 float t, h;
 char key;
-char teclasGuardadas[3], tempEstandar[3], hsEstandar[3], hrEstandar[3];//almacena los caracteres en EEPROM // 12 caracteres tiene que almacenar 4 para temp, 4 para hs y 4 para hr
+char teclasGuardadas[3];//almacena los caracteres en EEPROM
 char teclas[3]; //almacena los caracteres en una variable
 char keys[ROWS][COLS] = {
  {'1','2','3','A'},
@@ -77,7 +77,7 @@ void setup(){
 void loop(){
   //Temperatura(t); // Metodo para la lectura de la tempeartura
   //HumedadRelativa(h); // Metodo para la lectura de la humedad relativa
-  delay(1000);
+  //delay(1000);
   //HumedadSuelo(valT); // Metodo para la lectura de la humedad en suelo
   MenuLecturaOpciones();
 }
@@ -95,7 +95,6 @@ void MenuPrincipal(){
 
 void MenuLecturaOpciones(){
   z = 0;
-  y = 0;
   key = keypad.getKey(); //se guarda en la variable key el caracter de la tecla presionada
   
   if(key){
@@ -123,16 +122,14 @@ void MenuLecturaOpciones(){
         lcd20x4.setCursor(0,2);
         lcd20x4.print("[C] Cancelar");
         delay(1000);
-        MenuActivarActuador(); //Metodo para mostrar el menu del caso B "Activar actuador"
+        MenuActivarActuador(riegoGoteo, rociador); //Metodo para mostrar el menu del caso B "Activar actuador"
         z++;
-      break;
-      case 'C':
-        Serial.print(key);
       break;
     }
   }
 }
 
+// Caso A del Menu Principal
 void MenuModificarStnd(){
   cont = 0;
   y = 0;
@@ -163,44 +160,7 @@ void MenuModificarStnd(){
       cont++;
       y++;
     }
-    if(key == 'D'){ // Cancelar
-      Serial.print(key);
-      MenuPrincipal(); //Metodo para mostrar el menu principal
-      MenuLecturaOpciones();
-      z++;
-    }
-  }
-}
-
-void MenuActivarActuador(){
-  y = 0;
-  while(z<1){
-    key = keypad.getKey(); //Leyendo Keypad
-    delay(100);
-    if(key == '1'){ // Riego por goteo
-      //if(riegoGoteo){
-      lcd20x4.clear();
-      lcd20x4.setCursor(0,0);
-      lcd20x4.print("Estado actual:");
-      MenuRiegoPorGoteo();
-      lcd20x4.print("[A] Modificar Estado");
-      ModificarActuadorRiegoPorGoteo();
-      //}
-      y++;
-    }
-    if(key == '2'){ // Rociador
-      //if(rociador){
-      lcd20x4.clear();
-      lcd20x4.setCursor(0,0);
-      lcd20x4.print("Estado actual:");
-      MenuRociador();
-      lcd20x4.setCursor(0,3);
-      lcd20x4.print("[A] Modificar Estado");
-      ModificarActuadorRociador;
-      //}
-      y++;
-    }
-    if(key == 'D'){ // Cancelar
+    if(key == 'C'){ // Cancelar
       MenuPrincipal(); //Metodo para mostrar el menu principal
       MenuLecturaOpciones();
       z++;
@@ -282,7 +242,7 @@ char GuardarValor(){
       delay(1500);
       x++;
     }
-    if(key == 'D'){ // Cancelar
+    if(key == 'C'){ // Cancelar
       MenuPrincipal(); //Metodo para mostrar el menu principal
       MenuLecturaOpciones();
       x++;
@@ -294,108 +254,158 @@ char GuardarValor(){
   z++;
 }
 
-void ModificarActuadorRociador(){
-  y=0;
-  while(y<1){
+// Caso B del Menu Principal
+void MenuActivarActuador(bool riegoGoteo, bool rociador){
+  estadoActuador = false;
+  y = 0;
+  while(z<1){
     key = keypad.getKey(); //Leyendo Keypad
     delay(100);
-    if(key == '1'){ //EstadoRociador
-      lcd20x4.clear();
-      lcd20x4.setCursor(0,0);
-      lcd20x4.print("[0] Encender Rociador:");
-      lcd20x4.setCursor(0,1);
-      lcd20x4.print("[1] Apagar Rociador:");
-      ModificarEstadoRociador();
-      y++;
+    if(key == '1'){ // Riego por goteo
+      if(riegoGoteo){ // Condicion si el riego por goteo está apagado
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Estado actual:");
+        lcd20x4.setCursor(0,1);
+        lcd20x4.print("Riego Apagado");
+        estadoActuador = false;
+        lcd20x4.setCursor(0,2);
+        lcd20x4.print("[1] Modificar Estado");
+        ModificarRiegoPorGoteo(estadoActuador);
+        y++;
+      }
+      else{ // Condicion si el riego por goteo está encendido
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Estado actual:");
+        lcd20x4.setCursor(0,1);
+        lcd20x4.print("Riego Encendido");
+        estadoActuador = true;
+        lcd20x4.setCursor(0,2);
+        lcd20x4.print("[1] Modificar Estado");
+        ModificarRiegoPorGoteo(estadoActuador);
+        y++;
+      }
+    }
+    if(key == '2'){ // Rociador
+      if(rociador){ // Condicion si el rociador está apagado
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Estado actual:");
+        lcd20x4.setCursor(0,1);
+        lcd20x4.print("Rociador Apagado");
+        estadoActuador = false;
+        lcd20x4.setCursor(0,2);
+        lcd20x4.print("[1] Modificar Estado");
+        ModificarRociador(estadoActuador);
+        y++;
+      }
+      else{ // Condicion si el rociador está encendido
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Estado actual:");
+        lcd20x4.setCursor(0,1);
+        lcd20x4.print("Rociador Encendido");
+        estadoActuador = true;
+        lcd20x4.setCursor(0,2);
+        lcd20x4.print("[1] Modificar Estado");
+        ModificarRociador(estadoActuador);
+        y++;
+      }
+    }
+    if(key == 'C'){ // Cancelar
+      MenuPrincipal(); // Metodo para mostrar el menu principal
+      MenuLecturaOpciones();
+      z++;
     }
   }
 }
 
-void ModificarActuadorRiegoPorGoteo(){
-  y=0;
+void ModificarRociador(bool estadoActuador){
   while(y<1){
-    key = keypad.getKey(); //Leyendo Keypad
+    key = keypad.getKey();
     delay(100);
-    if(key == '1'){ //EstadoRociador
-      lcd20x4.clear();
-      lcd20x4.setCursor(0,0);
-      lcd20x4.print("[1] Encender Riego:");
-      lcd20x4.setCursor(0,1);
-      lcd20x4.print("[2] Apagar Riego:");
-      ModificarEstadoRiego();
-      y++;
-    }
-  }
-}
-
-void ModificarEstadoRociador(){
-  while(x<1){
-    key = keypad.getKey(); //Leyendo Keypad
-    delay(100);
-    if(key == '1'){ //Enceder Rociador 
-      digitalWrite(releRocio, HIGH);
-      rociador = true;
-      lcd20x4.setCursor(0,1);
-      lcd20x4.print("Rociador encendido");
-      x++;
-    }
-    if(key == '2'){ //Apagar Rociador 
-      digitalWrite(releRocio, LOW);
-      rociador = false;
-      lcd20x4.setCursor(0,1);
-      lcd20x4.print("Rociador apagado");
-      x++;
+    if(key == '1'){
+      if(estadoActuador == true){ // Condicion si el estado del actuador está encendido (rociador)
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Nuevo Estado:");
+        ApagarRociador(); // Metodo para apagar rociador
+        y++;
+      }
+      else{ // Condicion si el estado del actuador está apagado (rociador)
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Nuevo Estado:");
+        EncenderRociador(); // Metodo para encender rociador
+        y++;
+      }
     }
   }
   MenuPrincipal();
   MenuLecturaOpciones();
-  y++;
+  rociador = estadoActuador;
   z++;
 }
 
-void ModificarEstadoRiego(){
-  while(x<1){
-    key = keypad.getKey(); //Leyendo Keypad
+void ModificarRiegoPorGoteo(bool estadoActuador){
+  while(y<1){
+    key = keypad.getKey();
     delay(100);
-    if(key == '1'){ //Enceder Riego
-      digitalWrite(releGoteo, HIGH);
-      riegoGoteo = true;
-      lcd20x4.setCursor(0,1);
-      lcd20x4.println("Riego por goteo encendido");
-      x++;
-    }
-    if(key == '2'){ //Apagar Riego      
-      digitalWrite(releGoteo, LOW);
-      riegoGoteo = false;
-      lcd20x4.setCursor(0,1);
-      lcd20x4.print("Riego por goteo apagado");
-      x++;
+    if(key == '1'){
+      if(estadoActuador == true){ //Condicion si el estado del actuador está encendido (riego por goteo)
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Nuevo Estado:");
+        ApagarRiegoPorGoteo(); // Metodo para apagar el riego por goteo
+        y++;
+      }
+      else{ //Condicion si el estado del actuador está apagado (riego por goteo)
+        lcd20x4.clear();
+        lcd20x4.setCursor(0,0);
+        lcd20x4.print("Nuevo Estado:");
+        EncenderRiegoPorGoteo(); // Metodo para encender el riego por goteo
+        y++;
+      }
     }
   }
   MenuPrincipal();
   MenuLecturaOpciones();
-  y++;
+  riegoGoteo = estadoActuador;
   z++;
 }
 
-float lecturaTemp(){
-  t = dht.readTemperature(); // Leemos la temperatura en grados centígrados (por defecto)  
-  return t;
+void ApagarRiegoPorGoteo(){
+  digitalWrite(releGoteo, LOW);
+  riegoGoteo = false;
+  lcd20x4.setCursor(0,1);
+  lcd20x4.print("Riego Apagado");
 }
 
-int lecturaHs(){
-  valT = map(analogRead(sensorPinT), 0, 1023, 100, 0); //Trunca un valor del rango de (1023, 0) ajustandolo a los porcentajes de (0 y 100) (Humedad en suelo)
-  valT = constrain(valT, 0, 100); //Restringe un número a estar dentro del porcentaje de 0 y 100
-  return valT;
+void EncenderRiegoPorGoteo(){
+  digitalWrite(releGoteo, HIGH);
+  riegoGoteo = true;
+  lcd20x4.setCursor(0,1);
+  lcd20x4.println("Riego Encendido");
 }
 
-float lecturaHr(){
-  h = dht.readHumidity(); // Leemos la humedad relativa
-  return h;
+void ApagarRociador(){
+  digitalWrite(releRocio, LOW);
+  rociador = false;
+  lcd20x4.setCursor(0,1);
+  lcd20x4.print("Rociador Apagado");
+}
+
+void EncenderRociador(){
+  digitalWrite(releRocio, HIGH);
+  rociador = true;
+  lcd20x4.setCursor(0,1);
+  lcd20x4.print("Rociador Encendido");
 }
 
 void Temperatura(){
-  t = lecturaTemp();
+  t = dht.readTemperature(); // Leemos la temperatura en grados centígrados (por defecto)
+  
   //Validando lecturas de Temperatura
   if (isnan(t)) {
     Serial.println("Error obteniendo los datos de la Temperatura 'sensor DHT11'");
@@ -410,20 +420,23 @@ void Temperatura(){
 }
 
 void HumedadSuelo(){
-  valT = lecturaHs();
+  valT = map(analogRead(sensorPinT), 0, 1023, 100, 0); //Trunca un valor del rango de (1023, 0) ajustandolo a los porcentajes de (0 y 100) (Humedad en suelo)
+  valT = constrain(valT, 0, 100); //Restringe un número a estar dentro del porcentaje de 0 y 100
+  
   //Desplegando datos de la Humedad en el suelo
   lcd16x2.clear();
   lcd16x2.setCursor(0,0);
   lcd16x2.print("HS:");
   lcd16x2.print(valT);
+      
   if((valT >= 0) and (valT <= 33)) {
     lcd16x2.setCursor(0,1);
     lcd16x2.print("Suelo seco");
     digitalWrite(releGoteo, HIGH);
     riegoGoteo = true;
     delay(1000);
-    //lcd16x2.clear();
-    //lcd16x2.print("Riego x goteo on");
+    lcd16x2.clear();
+    lcd16x2.print("Riego Encendido");
   }else{ 
     if((valT >=34) and (valT <= 66)) {
       lcd16x2.setCursor(0,1);
@@ -434,68 +447,40 @@ void HumedadSuelo(){
       digitalWrite(releGoteo, LOW);
       riegoGoteo = false;
       delay(1000);
-      //lcd16x2.clear();
-      //lcd16x2.print("Riego x goteo off");
+      lcd16x2.clear();
+      lcd16x2.print("Riego Apagado");
     }
   }
   delay(1000);
 }
 
 void HumedadRelativa(){
-  h = lecturaHr();
+  h = dht.readHumidity(); // Leemos la humedad relativa
+  
   //Validando lecturas de Humedad Relativa
   if (isnan(h)) {
     Serial.println("Error obteniendo los datos de la humedad relativa 'sensor DHT11'");
     //return;
   }
-  //Desplegando datos en pantalla y puerto Serial
+  //Desplegando datos en pantalla
   lcd16x2.setCursor(0,0);
   lcd16x2.print("HA: ");
   lcd16x2.print(h);
   lcd16x2.print(" %");
-  //delay(1000);
-}
-
-void MenuRiegoPorGoteo(){
-  valT = lecturaHs();
-  HumedadSuelo();
-  if((valT >= 0) and (valT <= 33)) {
-    lcd16x2.setCursor(0,1);
-    lcd16x2.print("Suelo seco");
-    digitalWrite(releGoteo, HIGH);
-    riegoGoteo = true;
-    Serial.println("Riego por goteo encendido");
-  }else{ 
-    if((valT >=34) and (valT <= 66)) {
-      lcd16x2.setCursor(0,1);
-      lcd16x2.print("Suelo humedo");
-    }else{
-      lcd16x2.setCursor(0,1);
-      lcd16x2.print("Suelo mojado ");
-      digitalWrite(releGoteo, LOW);
-      riegoGoteo = false;
-      Serial.print("Riego por goteo apagado");
-    }
-  }
-}
-
-void MenuRociador(){
-  h = lecturaHr();
-  HumedadRelativa();
-  while(y<1){
-    if(h<40){
+  
+  if(h<40){
       digitalWrite(releRocio, HIGH);
       rociador = true;
       lcd20x4.setCursor(0,1);
-      lcd20x4.print("Rociador encendido");
+      lcd20x4.print("Rociador Encendido");
       delay(1000);
     }
     if(h>60){
       digitalWrite(releRocio, LOW);
       rociador = false;
       lcd20x4.setCursor(0,1);
-      lcd20x4.print("Rociador apagado");
+      lcd20x4.print("Rociador Apagado");
       delay(1000);
     }
-  }
+  //delay(1000);
 }
