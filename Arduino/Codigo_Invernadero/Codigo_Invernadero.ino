@@ -3,6 +3,7 @@
 #include <DHT.h> //Incluimos librería para sensor DHT 
 #include <LiquidCrystal_I2C.h> //libreria necesaria para display I2C
 #include <EEPROM.h> // Controla E/S EEPROM
+//#include <String.h>
 //#include <WiFi.h> // libreria necesaria para el modulo Wifi ESP8266
 
 #define DHTPIN 10 //Definimos el pin digital donde se conecta el sensor
@@ -17,6 +18,7 @@ const byte COLS = 4;
 bool riegoGoteo = false, rociador = false, estadoActuador;
 int valT, x, y, z, cont, liHs = 0, lsHs = 100, liTemp = 0, lsTemp = 50, liHa = 20, lsHa = 95;
 float t, h;
+//String actuador;
 char key;
 char teclasGuardadas[3];//almacena los caracteres en EEPROM
 char teclas[3]; //almacena los caracteres en una variable
@@ -380,6 +382,8 @@ void ApagarRiegoPorGoteo(){
   riegoGoteo = false;
   lcd20x4.setCursor(0,1);
   lcd20x4.print("Riego Apagado");
+  //actuador = "Riego Apagado";
+  //EEPROM.write("Riego Apagado");
 }
 
 void EncenderRiegoPorGoteo(){
@@ -387,6 +391,8 @@ void EncenderRiegoPorGoteo(){
   riegoGoteo = true;
   lcd20x4.setCursor(0,1);
   lcd20x4.println("Riego Encendido");
+  //actuador = "Riego Encendido";
+  //EEPROM.write("Riego Encendido");
 }
 
 void ApagarRociador(){
@@ -394,6 +400,8 @@ void ApagarRociador(){
   rociador = false;
   lcd20x4.setCursor(0,1);
   lcd20x4.print("Rociador Apagado");
+  //actuador = "Rociador Apagado";
+  //EEPROM.write("Rociador Apagado");
 }
 
 void EncenderRociador(){
@@ -401,6 +409,8 @@ void EncenderRociador(){
   rociador = true;
   lcd20x4.setCursor(0,1);
   lcd20x4.print("Rociador Encendido");
+  //actuador = "Rociador Encendido";
+  //EEPROM.write("Rociador Encendido");
 }
 
 void Temperatura(){
@@ -437,6 +447,8 @@ void HumedadSuelo(){
     delay(1000);
     lcd16x2.clear();
     lcd16x2.print("Riego Encendido");
+    //actuador = "Riego Encendido";
+    //EEPROM.write("Riego Encendido");
   }else{ 
     if((valT >=34) and (valT <= 66)) {
       lcd16x2.setCursor(0,1);
@@ -449,6 +461,8 @@ void HumedadSuelo(){
       delay(1000);
       lcd16x2.clear();
       lcd16x2.print("Riego Apagado");
+      //actuador = "Riego Apagado";
+      //EEPROM.write("Riego Apagado");
     }
   }
   delay(1000);
@@ -471,15 +485,19 @@ void HumedadRelativa(){
   if(h<40){
       digitalWrite(releRocio, HIGH);
       rociador = true;
-      lcd20x4.setCursor(0,1);
-      lcd20x4.print("Rociador Encendido");
+      lcd16x2.setCursor(0,1);
+      lcd16x2.print("Rociador Encendido");
+      //actuador = "Rociador Encendido";
+      //EEPROM.write("Rociador Encendido");
       delay(1000);
     }
     if(h>60){
       digitalWrite(releRocio, LOW);
       rociador = false;
-      lcd20x4.setCursor(0,1);
-      lcd20x4.print("Rociador Apagado");
+      lcd16x2.setCursor(0,1);
+      lcd16x2.print("Rociador Apagado");
+      //actuador = "Rociador Apagado";
+      //EEPROM.write("Rociador Apagado");
       delay(1000);
     }
   //delay(1000);
