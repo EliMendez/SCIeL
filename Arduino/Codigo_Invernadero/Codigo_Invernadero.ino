@@ -6,6 +6,24 @@
 //#include <String.h>
 //#include <WiFi.h> // libreria necesaria para el modulo Wifi ESP8266
 
+/*
+Para la comunicación serial entre Arduino y Python, tomaremos en cuenta los siguientes casos:
+
+0  --> Error
+1  --> Temperatura
+2  --> HumedadSuelo
+3  --> HumedadRelativa
+4  --> Modificación del Estandar liHs
+5  --> Modificación del Estandar lsHs
+6  --> Modificación del Estandar liTemp
+7  --> Modificación del Estandar lsTemp
+8  --> Modificación del Estandar liHa
+9  --> Modificación del Estandar lsHa
+10 --> Modificación del estado del Rociador
+11 --> Modificación del estado del Riego por goteo
+
+*/
+
 #define DHTPIN 10 //Definimos el pin digital donde se conecta el sensor
 #define DHTTYPE DHT11 //Dependiendo del tipo de sensor
 
@@ -418,6 +436,8 @@ void Temperatura(){
   
   //Validando lecturas de Temperatura
   if (isnan(t)) {
+    //Cuando haya un error, enviará un cero por el puerto serial, esto evitará que python capture datos inválidos
+    Serial.println("0");
     Serial.println("Error obteniendo los datos de la Temperatura 'sensor DHT11'");
     //return;
   }
@@ -426,6 +446,10 @@ void Temperatura(){
   lcd16x2.print("Temp: ");
   lcd16x2.print(t);
   lcd16x2.print(" *C");
+
+  //Enviando la temperatura por el puerto Serial
+  Serial.println("1");
+  Serial.println(t);
   //delay(1000);
 }
 
@@ -438,6 +462,10 @@ void HumedadSuelo(){
   lcd16x2.setCursor(0,0);
   lcd16x2.print("HS:");
   lcd16x2.print(valT);
+
+  //Enviando la humedad del suelo por el puerto serial
+  Serial.println("2");
+  Serial.println(valT);
       
   if((valT >= 0) and (valT <= 33)) {
     lcd16x2.setCursor(0,1);
@@ -447,6 +475,11 @@ void HumedadSuelo(){
     delay(1000);
     lcd16x2.clear();
     lcd16x2.print("Riego Encendido");
+    
+    //Registrando la activación del riego por goteo
+    Serial.println("11");
+    Serial.println("1")
+
     //actuador = "Riego Encendido";
     //EEPROM.write("Riego Encendido");
   }else{ 
@@ -461,6 +494,11 @@ void HumedadSuelo(){
       delay(1000);
       lcd16x2.clear();
       lcd16x2.print("Riego Apagado");
+
+      //Registrando el apagado del riego por goteo
+      Serial.println("11");
+      Serial.println("0")
+
       //actuador = "Riego Apagado";
       //EEPROM.write("Riego Apagado");
     }
@@ -481,12 +519,21 @@ void HumedadRelativa(){
   lcd16x2.print("HA: ");
   lcd16x2.print(h);
   lcd16x2.print(" %");
+
+  //Enviando la humedad del aire por el puerto serial
+  Serial.println("3");
+  Serial.println(h);
   
   if(h<40){
       digitalWrite(releRocio, HIGH);
       rociador = true;
       lcd16x2.setCursor(0,1);
       lcd16x2.print("Rociador Encendido");
+
+      //Registrando la activación del rociador
+      Serial.println("10");
+      Serial.println("1")
+
       //actuador = "Rociador Encendido";
       //EEPROM.write("Rociador Encendido");
       delay(1000);
@@ -496,6 +543,10 @@ void HumedadRelativa(){
       rociador = false;
       lcd16x2.setCursor(0,1);
       lcd16x2.print("Rociador Apagado");
+
+      //Registrando el apagado del rociador
+      Serial.println("10");
+      Serial.println("0")
       //actuador = "Rociador Apagado";
       //EEPROM.write("Rociador Apagado");
       delay(1000);
