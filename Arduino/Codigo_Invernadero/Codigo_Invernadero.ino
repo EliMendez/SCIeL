@@ -3,8 +3,6 @@
 #include <DHT.h> //Incluimos librería para sensor DHT 
 #include <LiquidCrystal_I2C.h> //libreria necesaria para display I2C
 #include <EEPROM.h> // Controla E/S EEPROM
-//#include <String.h>
-//#include <WiFi.h> // libreria necesaria para el modulo Wifi ESP8266
 
 /*
 Para la comunicación serial entre Arduino y Python, tomaremos en cuenta los siguientes casos:
@@ -34,12 +32,10 @@ const int releRocio = 12;
 const byte ROWS = 4;
 const byte COLS = 4;
 bool riegoGoteo = false, rociador = false, estadoActuador;
-int valT, x, y, z, cont, liHs = 0, lsHs = 100, liTemp = 0, lsTemp = 50, liHa = 20, lsHa = 95;
+int i, valT, x, y, z, contliTemp, contlsTemp, contliHa, contliHs, contlsHa, contlsHs, liHs = 0, lsHs = 100, liTemp = 0, lsTemp = 50, liHa = 20, lsHa = 95;
 float t, h;
-//String actuador;
 char key;
-char teclasGuardadas[3];//almacena los caracteres en EEPROM
-char teclas[3]; //almacena los caracteres en una variable
+char liTemperatura[3], lsTemperatura[7], liHsuelo[11], lsHsuelo[15], liHaire[19], lsHaire[23]; //almacena los caracteres en EEPROM
 char keys[ROWS][COLS] = {
  {'1','2','3','A'},
  {'4','5','6','B'},
@@ -67,30 +63,49 @@ void setup(){
 
   MenuPrincipal();
 
-  for(cont=0; cont<=sizeof(teclasGuardadas); cont++){
-    teclasGuardadas[cont] = char(EEPROM.read(cont));
-    Serial.print(teclasGuardadas[cont]);
+  //Lectura de los nuevos estandares de la Temperatura que estan almacendados en EEPROM
+  Serial.println("\n***Estandar Temp***");
+  Serial.println("Limite inferior: ");
+  //Serial.println("6");
+  for(contliTemp=2; contliTemp<=sizeof(liTemperatura); contliTemp++){
+    liTemperatura[contliTemp] = char(EEPROM.read(contliTemp));
+    Serial.print(liTemperatura[contliTemp]);
   }
-  if(teclasGuardadas[0] == '1'){
-    Serial.println("\nEstandar Temp: ");
-    for(cont=2; cont<=sizeof(teclasGuardadas); cont++){
-      teclas[cont] = char(EEPROM.read(cont));
-      Serial.print(teclas[cont]);
-    }
+  Serial.println("\nLimite superior: ");
+  //Serial.println("7");
+  for(contlsTemp=6; contlsTemp<=sizeof(lsTemperatura); contlsTemp++){
+    lsTemperatura[contlsTemp] = char(EEPROM.read(contlsTemp));
+    Serial.print(lsTemperatura[contlsTemp]);
   }
-  if(teclasGuardadas[0] == '2'){
-    Serial.println("\nEstandar Hs: ");
-    for(cont=2; cont<=sizeof(teclasGuardadas); cont++){
-      teclas[cont] = char(EEPROM.read(cont));
-      Serial.print(teclas[cont]);
-    }
+  
+  //Lectura de los nuevos estandares de la Humedad en suelo que estan almacendados en EEPROM
+  Serial.println("\n***Estandar Hs***");
+  Serial.println("Limite inferior: ");
+  //Serial.println("4");
+  for(contliHs=10; contliHs<=sizeof(liHsuelo); contliHs++){
+    liHsuelo[contliHs] = char(EEPROM.read(contliHs));
+    Serial.print(liHsuelo[contliHs]);
+  }  
+  Serial.println("\nLimite superior: ");
+  //Serial.println("5");
+  for(contlsHs=14; contlsHs<=sizeof(lsHsuelo); contlsHs++){
+    lsHsuelo[contlsHs] = char(EEPROM.read(contlsHs));
+    Serial.print(lsHsuelo[contlsHs]);
   }
-  if(teclasGuardadas[0] == '3'){
-    Serial.println("\nEstandar Hr: ");
-    for(cont=2; cont<=sizeof(teclasGuardadas); cont++){
-      teclas[cont] = char(EEPROM.read(cont));
-      Serial.print(teclas[cont]);
-    }
+  
+  //Lectura de los nuevos estandares de la humedad relativa que estan almacendados en EEPROM
+  Serial.println("\n***Estandar Ha***");
+  Serial.println("Limite inferior: ");
+  //Serial.println("8");
+  for(contliHa=18; contliHa<=sizeof(liHaire); contliHa++){
+    liHaire[contliHa] = char(EEPROM.read(contliHa));
+    Serial.print(liHaire[contliHa]);
+  }  
+  Serial.println("\nLimite superior: ");
+  //Serial.println("9");
+  for(contlsHa=22; contlsHa<=sizeof(lsHaire); contlsHa++){
+    lsHaire[contlsHa] = char(EEPROM.read(contlsHa));
+    Serial.print(lsHaire[contlsHa]);
   }
 }
 
@@ -149,10 +164,8 @@ void MenuLecturaOpciones(){
   }
 }
 
-// Caso A del Menu Principal
 void MenuModificarStnd(){
-  cont = 0;
-  y = 0;
+  y = 0, contliTemp = 0, contlsTemp = 4, contliHs = 8, contlsHs = 12, contliHa = 16, contlsHa = 20;
   while(z<1){
     key = keypad.getKey(); //Leyendo Keypad
     delay(100);
@@ -160,24 +173,21 @@ void MenuModificarStnd(){
       lcd20x4.clear();
       lcd20x4.setCursor(0,0);
       lcd20x4.print("Temperatura (*C) ");
-      MenuLimiteIyS(liTemp, lsTemp, cont);
-      cont++;
+      MenuLimiteIyS(liTemp, lsTemp, contliTemp, contlsTemp, liTemperatura[3], lsTemperatura[3]); 
       y++;
     }
     if(key == '2'){ // Modificar HS (humedad del suelo)
       lcd20x4.clear();
       lcd20x4.setCursor(0,0);
       lcd20x4.print("Humedad suelo (%)");
-      MenuLimiteIyS(liHs, lsHs, cont);
-      cont++;
+      MenuLimiteIyS(liHs, lsHs, contliHs, contlsHs, liHsuelo[3], lsHsuelo[3]);
       y++;
     }
     if(key == '3'){ // Modificar HA (humedad relativa)
       lcd20x4.clear();
       lcd20x4.setCursor(0,0);
       lcd20x4.print("Humedad relativa (%)");
-      MenuLimiteIyS(liHa, lsHa, cont);
-      cont++;
+      MenuLimiteIyS(liHa, lsHa, contliHa, contlsHa, liHaire[3], lsHaire[3]);
       y++;
     }
     if(key == 'C'){ // Cancelar
@@ -188,55 +198,69 @@ void MenuModificarStnd(){
   }
 }
 
-void MenuLimiteIyS(int li, int ls, int cont){
-  teclas[cont] = key;//se guarda caracter por caracter en el arreglo teclas[]
-  teclasGuardadas[cont] = teclas[cont];
-  EEPROM.write(cont, teclasGuardadas[cont]);
-  cont++;
+void MenuLimiteIyS(int li, int ls, int contli, int contls, char linf[3], char lsup[3]){
+  linf[contli] = key;
+  lsup[contls] = key;
+  EEPROM.write(contli, linf[contli]);
+  EEPROM.write(contls, lsup[contls]);
+  Serial.print(linf[contli]);
+  Serial.print(lsup[contls]);
+  contli++;
+  contls++;
   lcd20x4.setCursor(0,1);
-  lcd20x4.print("Limit inferior: ");
+  lcd20x4.print("Limite inf:");
   lcd20x4.print(li);
-  lcd20x4.setCursor(0,2);
-  lcd20x4.print("Limit superior: ");
+  lcd20x4.print(" sup:");
   lcd20x4.print(ls);
+  lcd20x4.setCursor(0,2);
+  lcd20x4.print("[1] Modif Limite inf");
   lcd20x4.setCursor(0,3);
-  lcd20x4.print("[1] Nuevo Estandar");
-  MenuNuevoEstandar(cont); // Metodo para capturar el nuevo valor  
+  lcd20x4.print("[2] Modif Limite sup");
+  MenuNuevoEstandar(contli, contls, linf[3], lsup[3]); // Metodo para capturar el nuevo valor  
 }
 
-void MenuNuevoEstandar(int cont){
+void MenuNuevoEstandar(int contli, int contls, char linf[3], char lsup[3]){
+  x = 0;
   while(y<1){
     key = keypad.getKey(); //Leyendo Keypad
     delay(100);
-    if(key == '1'){ //Nuevo Estandar
-      teclas[cont] = key;//se guarda caracter por caracter en el arreglo teclas[]
-      teclasGuardadas[cont] = teclas[cont];
-      EEPROM.write(cont, teclasGuardadas[cont]);
-      cont++;
+    if(key == '1'){ //Nuevo Estandar para limite inferior
+      linf[contli] = key;//se guarda caracter por caracter en el arreglo limite[]
+      EEPROM.write(contli, linf[contli]);
+      Serial.print(linf[contli]);
+      contli++;
       lcd20x4.clear();
       lcd20x4.setCursor(0,0);
-      lcd20x4.print("Nuevo Estandar:");
-      CapturarEstandar(cont);
+      lcd20x4.print("Nuevo Limite inf:");
+      CapturarEstandar(contli, linf[3]);
+      x++;
+    }
+    if(key == '2'){ //Nuevo Estandar para limite superior
+      lsup[contls] = key; //se guarda caracter por caracter en el arreglo limite[]
+      EEPROM.write(contls, lsup[contls]);
+      Serial.print(lsup[contls]);
+      contls++;
+      lcd20x4.clear();
+      lcd20x4.setCursor(0,0);
+      lcd20x4.print("Nuevo Limite sup:");
+      CapturarEstandar(contls, lsup[3]);
+      x++;
     }
   }
 }
 
-void CapturarEstandar(int cont){
-  int conta = cont;
-  x = 0;
-  int i = 0;
-  char valor[2];
+void CapturarEstandar(int contlim, char limite[3]){
+  x = 0, i = 0;
   while(i<2){
     key = keypad.getKey();
     delay(100);
     if(key){
       if((key != 'A') and (key != 'B') and (key != 'C') and (key != 'D') and (key != '*' ) and (key != '#')){
-        //Comparar si el valor esta en el intervalo de temp, hs y hr dependiendo la opcion que se haya seleccionado
-        teclas[conta] = key;//se guarda caracter por caracter en el arreglo teclas[]
-        teclasGuardadas[conta] = teclas[conta];
-        EEPROM.write(conta, teclasGuardadas[conta]);
+        limite[contlim] = key; //se guarda caracter por caracter en el arreglo limite[]
+        EEPROM.write(contlim, limite[contlim]);
+        Serial.print(limite[contlim]);
         lcd20x4.print(key);
-        conta++;
+        contlim++;
         i++;
       }
     }
@@ -400,8 +424,9 @@ void ApagarRiegoPorGoteo(){
   riegoGoteo = false;
   lcd20x4.setCursor(0,1);
   lcd20x4.print("Riego Apagado");
-  //actuador = "Riego Apagado";
-  //EEPROM.write("Riego Apagado");
+  //Registrando el apagado del riego por goteo
+  Serial.println("11");
+  Serial.println("0");
 }
 
 void EncenderRiegoPorGoteo(){
@@ -409,8 +434,9 @@ void EncenderRiegoPorGoteo(){
   riegoGoteo = true;
   lcd20x4.setCursor(0,1);
   lcd20x4.println("Riego Encendido");
-  //actuador = "Riego Encendido";
-  //EEPROM.write("Riego Encendido");
+  //Registrando la activación del riego por goteo
+  Serial.println("11");
+  Serial.println("1");
 }
 
 void ApagarRociador(){
@@ -418,8 +444,9 @@ void ApagarRociador(){
   rociador = false;
   lcd20x4.setCursor(0,1);
   lcd20x4.print("Rociador Apagado");
-  //actuador = "Rociador Apagado";
-  //EEPROM.write("Rociador Apagado");
+  //Registrando el apagado del rociador
+  Serial.println("10");
+  Serial.println("0");
 }
 
 void EncenderRociador(){
@@ -427,8 +454,9 @@ void EncenderRociador(){
   rociador = true;
   lcd20x4.setCursor(0,1);
   lcd20x4.print("Rociador Encendido");
-  //actuador = "Rociador Encendido";
-  //EEPROM.write("Rociador Encendido");
+  //Registrando la activación del rociador
+  Serial.println("10");
+  Serial.println("1");
 }
 
 void Temperatura(){
@@ -439,7 +467,6 @@ void Temperatura(){
     //Cuando haya un error, enviará un cero por el puerto serial, esto evitará que python capture datos inválidos
     Serial.println("0");
     Serial.println("Error obteniendo los datos de la Temperatura 'sensor DHT11'");
-    //return;
   }
   lcd16x2.clear();
   lcd16x2.setCursor(0,0);
@@ -453,7 +480,7 @@ void Temperatura(){
   //delay(1000);
 }
 
-void HumedadSuelo(){
+void HumedadSuelo(int liHs, int lsHs){
   valT = map(analogRead(sensorPinT), 0, 1023, 100, 0); //Trunca un valor del rango de (1023, 0) ajustandolo a los porcentajes de (0 y 100) (Humedad en suelo)
   valT = constrain(valT, 0, 100); //Restringe un número a estar dentro del porcentaje de 0 y 100
   
@@ -467,52 +494,32 @@ void HumedadSuelo(){
   Serial.println("2");
   Serial.println(valT);
       
-  if((valT >= 0) and (valT <= 33)) {
+  if((valT >= 0) and (valT <= liHs)) {
     lcd16x2.setCursor(0,1);
     lcd16x2.print("Suelo seco");
-    digitalWrite(releGoteo, HIGH);
-    riegoGoteo = true;
     delay(1000);
-    lcd16x2.clear();
-    lcd16x2.print("Riego Encendido");
-    
-    //Registrando la activación del riego por goteo
-    Serial.println("11");
-    Serial.println("1")
-
-    //actuador = "Riego Encendido";
-    //EEPROM.write("Riego Encendido");
+    EncenderRiegoPorGoteo();
   }else{ 
-    if((valT >=34) and (valT <= 66)) {
+    if((valT > liHs) and (valT <= lsHs)) {
       lcd16x2.setCursor(0,1);
       lcd16x2.print("Suelo humedo");
     }else{
       lcd16x2.setCursor(0,1);
       lcd16x2.print("Suelo mojado");
-      digitalWrite(releGoteo, LOW);
-      riegoGoteo = false;
       delay(1000);
-      lcd16x2.clear();
-      lcd16x2.print("Riego Apagado");
-
-      //Registrando el apagado del riego por goteo
-      Serial.println("11");
-      Serial.println("0")
-
-      //actuador = "Riego Apagado";
-      //EEPROM.write("Riego Apagado");
+      ApagarRiegoPorGoteo();
     }
   }
   delay(1000);
 }
 
-void HumedadRelativa(){
+void HumedadRelativa(int liHa, int lsHa){
   h = dht.readHumidity(); // Leemos la humedad relativa
   
   //Validando lecturas de Humedad Relativa
   if (isnan(h)) {
+    Serial.println("0");
     Serial.println("Error obteniendo los datos de la humedad relativa 'sensor DHT11'");
-    //return;
   }
   //Desplegando datos en pantalla
   lcd16x2.setCursor(0,0);
@@ -524,32 +531,13 @@ void HumedadRelativa(){
   Serial.println("3");
   Serial.println(h);
   
-  if(h<40){
-      digitalWrite(releRocio, HIGH);
-      rociador = true;
-      lcd16x2.setCursor(0,1);
-      lcd16x2.print("Rociador Encendido");
-
-      //Registrando la activación del rociador
-      Serial.println("10");
-      Serial.println("1")
-
-      //actuador = "Rociador Encendido";
-      //EEPROM.write("Rociador Encendido");
-      delay(1000);
-    }
-    if(h>60){
-      digitalWrite(releRocio, LOW);
-      rociador = false;
-      lcd16x2.setCursor(0,1);
-      lcd16x2.print("Rociador Apagado");
-
-      //Registrando el apagado del rociador
-      Serial.println("10");
-      Serial.println("0")
-      //actuador = "Rociador Apagado";
-      //EEPROM.write("Rociador Apagado");
-      delay(1000);
-    }
+  if(h<liHa){
+    EncenderRociador();
+    delay(1000);
+  }
+  if(h>lsHa){
+    ApagarRociador();
+    delay(1000);
+  }
   //delay(1000);
 }
