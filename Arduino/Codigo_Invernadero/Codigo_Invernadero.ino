@@ -461,6 +461,7 @@ void Temperatura(){
   lcd16x2.print(" *C");
 
   //Enviando la temperatura por el puerto Serial
+  Seria.print("1");
   Serial.print("{\"Temp\": ");
   Serial.print(t);
   Serial.println("}\n");
@@ -481,6 +482,7 @@ void HumedadSuelo(){
   lcd16x2.print(valT);
 
   //Enviando la humedad del suelo por el puerto serial
+  Serial.print("2");
   Serial.print("{\"Hs\": ");
   Serial.print(valT);
   Serial.println("}\n");
@@ -522,6 +524,7 @@ char HumedadRelativa(){
   lcd16x2.print(" %");
 
   //Enviando la humedad del aire por el puerto serial
+  Serial.print("3");
   Serial.print("{\"Ha\": ");
   Serial.print(h);
   Serial.println("}\n");
@@ -540,6 +543,7 @@ char HumedadRelativa(){
 char lecturaLiTemperatura(){
   char liTemperatura[3];
   int contliTemp;
+  Serial.print("6");
   Serial.print("{\"LiTemp\": ");
   for(contliTemp=2; contliTemp<=sizeof(liTemperatura); contliTemp++){
     liTemperatura[contliTemp] = char(EEPROM.read(contliTemp));
@@ -553,6 +557,7 @@ char lecturaLiTemperatura(){
 char lecturaLsTemperatura(){
   char lsTemperatura[7];
   int contlsTemp;
+  Serial.print("7");
   Serial.print("{\"LsTemp\": ");
   for(contlsTemp=6; contlsTemp<=sizeof(lsTemperatura); contlsTemp++){
     lsTemperatura[contlsTemp] = char(EEPROM.read(contlsTemp));
@@ -566,6 +571,7 @@ char lecturaLsTemperatura(){
 char lecturaLiHsuelo(){
   char liHsuelo[11];
   int contliHs;  
+  Serial.print("4");
   Serial.print("{\"LiHs\": ");
   for(contliHs=10; contliHs<=sizeof(liHsuelo); contliHs++){
     liHsuelo[contliHs] = char(EEPROM.read(contliHs));
@@ -579,6 +585,7 @@ char lecturaLiHsuelo(){
 char lecturaLsHsuelo(){
   char lsHsuelo[15];
   int contlsHs;
+  Serial.print("5");
   Serial.print("{\"LsHs\": ");
   for(contlsHs=14; contlsHs<=sizeof(lsHsuelo); contlsHs++){
     lsHsuelo[contlsHs] = char(EEPROM.read(contlsHs));
@@ -592,6 +599,7 @@ char lecturaLsHsuelo(){
 char lecturaLiHaire(){
   char liHaire[19];
   int contliHa;  
+  Serial.print("8");
   Serial.print("{\"LiHa\": ");
   for(contliHa=18; contliHa<=sizeof(liHaire); contliHa++){
     liHaire[contliHa] = char(EEPROM.read(contliHa));
@@ -605,6 +613,7 @@ char lecturaLiHaire(){
 char lecturaLsHaire(){
   char lsHaire[23];
   int contlsHa;
+  Serial.print("9");
   Serial.print("{\"LsHa\": ");
   for(contlsHa=22; contlsHa<=sizeof(lsHaire); contlsHa++){
     lsHaire[contlsHa] = char(EEPROM.read(contlsHa));
