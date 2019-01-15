@@ -3,28 +3,25 @@
 #include <DHT.h> //Incluimos librería para sensor DHT 
 #include <LiquidCrystal_I2C.h> //libreria necesaria para display I2C
 #include <EEPROM.h> // Controla E/S EEPROM
-/*
-Para la comunicación serial entre Arduino y Python, tomaremos en cuenta los siguientes casos:
-
-0  --> Error
-1  --> Temperatura
-2  --> HumedadSuelo
-3  --> HumedadRelativa
-4  --> Modificación del Estandar liHs
-5  --> Modificación del Estandar lsHs
-6  --> Modificación del Estandar liTemp
-7  --> Modificación del Estandar lsTemp
-8  --> Modificación del Estandar liHa
-9  --> Modificación del Estandar lsHa
-10 --> Modificación del estado del Rociador--
-11 --> Modificación del estado del Riego por goteo--
-
-*/
 
 #define DHTPIN 10 //Definimos el pin digital donde se conecta el sensor
 #define DHTTYPE DHT11 //Dependiendo del tipo de sensor
 
 //Declaración de variables locales
+struct MEDICION{
+  int invernadero;
+  int parametro;
+  int sensor;
+  int actuador;
+  float medicion;
+  bool estado;
+} toma_medicion;
+
+//Instanciando objetos
+MEDICION temperatura;
+MEDICION humedadRelativa;
+MEDICION humedadSuelo;
+
 const int sensorPinT = A0;
 const int releGoteo = 11;
 const int releRocio = 12;
@@ -50,6 +47,20 @@ DHT dht(DHTPIN, DHTTYPE); //Inicializamos el sensor DHT11
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS ); //Inicializamos la keypad
 
 void setup(){
+  //Inicializamos objetos
+  temperatura.invernadero = 1;
+  temperatura.sensor = 1; //DHT11
+  temperatura.actuador = 1; //Rociador
+  temperatura.parametro = 1;  //Temperatura
+  humedadRelativa.invernadero = 1;
+  humedadRelativa.sensor = 1; //DHT11
+  humedadRelativa.actuador = 1; //Rociador
+  humedadRelativa.parametro = 2;  //Humedad Relativa
+  humedadSuelo.invernadero = 1;
+  humedadSuelo.sensor = 2; //Suelo
+  humedadSuelo.actuador = 2; //Riego por Goteo
+  humedadSuelo.parametro = 3;  //Humedad del Suelo
+
   Serial.begin(9600);
   Wire.begin(); // Unimos este dispositivo al bus I2C
   dht.begin();
@@ -65,10 +76,14 @@ void setup(){
 
 void loop(){
     Temperatura(); // Metodo para la lectura de la tempeartura
-    //HumedadRelativa(); // Metodo para la lectura de la humedad relativa
-    //HumedadSuelo(); // Metodo para la lectura de la humedad en suelo
+    HumedadRelativa(); // Metodo para la lectura de la humedad relativa
+    HumedadSuelo(); // Metodo para la lectura de la humedad en suelo
     MenuLecturaOpciones();
-   
+
+    //Despues de leer los datos, los enviamos por el puerto Serial
+    sendData(humedadSuelo);
+    sendData(humedadRelativa);
+    sendData(temperatura);
 }
 
 void MenuPrincipal(){
@@ -403,10 +418,8 @@ void ApagarRiegoPorGoteo(){
   lcd16x2.setCursor(0,1);
   lcd16x2.print("Riego Apagado");
   
-  //Registrando el apagado del riego por goteo
-  Serial.print("{\"Estado_riego\":");
-  Serial.print(riegoGoteo);
-  Serial.println("}\n");
+  //Registrando el cambio de estado
+  humedadSuelo.estado = riegoGoteo;
 }
 
 void EncenderRiegoPorGoteo(){
@@ -414,23 +427,16 @@ void EncenderRiegoPorGoteo(){
   riegoGoteo = true;
   lcd16x2.setCursor(0,1);
   lcd16x2.print("Riego Encendido");
-  
-  //Registrando la activación del riego por goteo
-  Serial.print("{\"Estado_riego\":");
-  Serial.print(riegoGoteo);
-  Serial.println("}\n");
+
+  //Registrando el cambio de estado
+  humedadSuelo.estado = riegoGoteo;  
 }
 
 void ApagarRociador(){
   digitalWrite(releRocio, LOW);
   rociador = false;
   lcd16x2.setCursor(0,1);
-  lcd16x2.print("Rociador Apagado");
-  
-  //Registrando el apagado del rociador
-  Serial.print("{\"Estado rociador\":");
-  Serial.print(rociador);
-  Serial.println("}\n");
+  lcd16x2.print("Rociador Apagado");  
 }
 
 void EncenderRociador(){
@@ -438,33 +444,27 @@ void EncenderRociador(){
   rociador = true;
   lcd16x2.setCursor(0,1);
   lcd16x2.print("Rociador Encendido");
-  
-  //Registrando la activación del rociador
-  Serial.print("{\"Estado rociador\":");
-  Serial.print(rociador);
-  Serial.println("}\n");
 }
 
 void Temperatura(){
   t = dht.readTemperature(); // Leemos la temperatura en grados centígrados (por defecto)
   
   //Validando lecturas de Temperatura
-  /*if (isnan(t)) {
+  if (isnan(t)) {
     //Cuando haya un error, enviará un cero por el puerto serial, esto evitará que python capture datos inválidos
-    Serial.println("0");
-    Serial.println("Error obteniendo los datos de la Temperatura 'sensor DHT11'");
-  }*/
+    lcd16x2.clear();
+    lcd16x2.setCursor(0,0);
+    lcd16x2.print("Temp: ¡Error!");
+  }
   lcd16x2.clear();
   lcd16x2.setCursor(0,0);
   lcd16x2.print("Temp: ");
   lcd16x2.print(t);
   lcd16x2.print(" *C");
 
-  //Enviando la temperatura por el puerto Serial
-  Seria.print("1");
-  Serial.print("{\"Temp\": ");
-  Serial.print(t);
-  Serial.println("}\n");
+  //Registrando datos
+  temperatura.medicion = t;
+  
   delay(1000);
 }
 
@@ -474,23 +474,21 @@ void HumedadSuelo(){
   
   valT = map(analogRead(sensorPinT), 0, 1023, 100, 0); //Trunca un valor del rango de (1023, 0) ajustandolo a los porcentajes de (0 y 100) (Humedad en suelo)
   valT = constrain(valT, 0, 100); //Restringe un número a estar dentro del porcentaje de 0 y 100
+
+  //Registrando la lectura
+  humedadSuelo.medicion = valT;
   
   //Desplegando datos de la Humedad en el suelo
   lcd16x2.clear();
   lcd16x2.setCursor(0,0);
   lcd16x2.print("HS:");
   lcd16x2.print(valT);
-
-  //Enviando la humedad del suelo por el puerto serial
-  Serial.print("2");
-  Serial.print("{\"Hs\": ");
-  Serial.print(valT);
-  Serial.println("}\n");
       
   if((valT >= 0) and (valT <= liHs)) { 
     lcd16x2.setCursor(0,1);
     lcd16x2.print("Suelo seco");
     delay(1000);
+    humedadSuelo.estado = true;
     EncenderRiegoPorGoteo();
   }else{ 
     if((valT > liHs) and (valT <= lsHs)) {
@@ -500,6 +498,7 @@ void HumedadSuelo(){
       lcd16x2.setCursor(0,1);
       lcd16x2.print("Suelo mojado");
       delay(1000);
+      humedadSuelo.estado = false;
       ApagarRiegoPorGoteo();
     }
   }
@@ -512,29 +511,31 @@ char HumedadRelativa(){
   lsHa = lecturaLsHaire();
   
   //Validando lecturas de Humedad Relativa
-  /*if (isnan(h)) {
-    Serial.println("0");
-    Serial.println("Error obteniendo los datos de la humedad relativa 'sensor DHT11'");
-  }*/
-  //Desplegando datos en pantalla
-  lcd16x2.clear();
+  if (isnan(h)) {
+    lcd16x2.clear();
   lcd16x2.setCursor(0,0);
-  lcd16x2.print("HA: ");
-  lcd16x2.print(h);
-  lcd16x2.print(" %");
-
-  //Enviando la humedad del aire por el puerto serial
-  Serial.print("3");
-  Serial.print("{\"Ha\": ");
-  Serial.print(h);
-  Serial.println("}\n");
+  lcd16x2.print("HA: ¡Error!");
+  }else{
+    //Desplegando datos en pantalla
+    lcd16x2.clear();
+    lcd16x2.setCursor(0,0);
+    lcd16x2.print("HA: ");
+    lcd16x2.print(h);
+    lcd16x2.print(" %");
+    //Registrando lectura
+    humedadRelativa.medicion = h;
+  }  
   
   if(h<liHa){
       EncenderRociador();
+      //Registrando el estado
+      humedadRelativa.estado = true;
       delay(1000);
     }
     if(h>lsHa){
       ApagarRociador();
+      //Registrando el estado
+      humedadRelativa.estado = false;
       delay(1000);
     }
   delay(1000);
@@ -550,7 +551,7 @@ char lecturaLiTemperatura(){
     lcd20x4.print(liTemperatura[contliTemp]);
     Serial.print(liTemperatura[contliTemp]);
   }
-  Serial.println("}\n");
+  
   delay(100);
 }
 
@@ -564,7 +565,7 @@ char lecturaLsTemperatura(){
     lcd20x4.print(lsTemperatura[contlsTemp]);
     Serial.print(lsTemperatura[contlsTemp]);
   }
-  Serial.println("}\n");
+  
   delay(100);
 }
 
@@ -578,7 +579,7 @@ char lecturaLiHsuelo(){
     lcd20x4.print(liHsuelo[contliHs]);
     Serial.print(liHsuelo[contliHs]);
   }
-  Serial.println("}\n");
+  
   delay(100);
 }
 
@@ -592,7 +593,7 @@ char lecturaLsHsuelo(){
     lcd20x4.print(lsHsuelo[contlsHs]);
     Serial.print(lsHsuelo[contlsHs]);
   }
-  Serial.println("}\n");
+  
   delay(100);
 }
 
@@ -606,20 +607,37 @@ char lecturaLiHaire(){
     lcd20x4.print(liHaire[contliHa]);
     Serial.print(liHaire[contliHa]);
   }
-  Serial.println("}\n");
+  
   delay(100);
 }
 
 char lecturaLsHaire(){
   char lsHaire[23];
   int contlsHa;
-  Serial.print("9");
-  Serial.print("{\"LsHa\": ");
   for(contlsHa=22; contlsHa<=sizeof(lsHaire); contlsHa++){
     lsHaire[contlsHa] = char(EEPROM.read(contlsHa));
     lcd20x4.print(lsHaire[contlsHa]);
-    Serial.print(lsHaire[contlsHa]);
   }
-  Serial.println("}\n");
   delay(100);
+}
+
+void sendData(MEDICION med){
+  Serial.print("{\"invernadero: \"");
+  Serial.print(med.invernadero);
+  Serial.print(",");
+  Serial.print("\"parametro: \"");
+  Serial.print(med.parametro);
+  Serial.print(",");
+  Serial.print("\"sensor: \"");
+  Serial.print(med.sensor);
+  Serial.print(",");
+  Serial.print("\"actuador: \"");
+  Serial.print(med.actuador);
+  Serial.print(",");
+  Serial.print("\"medicion: \"");
+  Serial.print(med.medicion);
+  Serial.print(",");
+  Serial.print("\"estado: \"");
+  Serial.print(med.estado);
+  Serial.println("}\n");
 }
