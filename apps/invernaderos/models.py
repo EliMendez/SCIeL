@@ -191,11 +191,25 @@ class Parametro(models.Model):
         null=True, 
         blank=False
     )
-    magnitud_referencia = models.DecimalField(
-        verbose_name='Magnitud del Parámetro Base',
+    magnitud_referencia_limite_inferior = models.DecimalField(
+        verbose_name='Magnitud del Parámetro Base limite inferior',
         max_digits=10,
         decimal_places=2,
-        help_text='Ingrese el valor de la magnitud de referencia para este parámetro',
+        help_text='Ingrese el valor de la magnitud de referencia del limite inferior para este parámetro',
+        error_messages={
+            'value': 'Ese valor debe ser positivo'
+        },
+        validators=[
+            MinValueValidator(0)
+        ],
+        null=True, 
+        blank=False
+    )
+    magnitud_referencia_limite_superior = models.DecimalField(
+        verbose_name='Magnitud del Parámetro Base limite superior',
+        max_digits=10,
+        decimal_places=2,
+        help_text='Ingrese el valor de la magnitud de referencia del limite superior para este parámetro',
         error_messages={
             'value': 'Ese valor debe ser positivo'
         },

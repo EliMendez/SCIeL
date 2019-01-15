@@ -64,11 +64,11 @@ void setup(){
 }
 
 void loop(){
-  //Temperatura(t); // Metodo para la lectura de la tempeartura
-  //HumedadRelativa(h); // Metodo para la lectura de la humedad relativa
-  //delay(1000);
-  //HumedadSuelo(valT); // Metodo para la lectura de la humedad en suelo
-  MenuLecturaOpciones();
+    Temperatura(); // Metodo para la lectura de la tempeartura
+    //HumedadRelativa(); // Metodo para la lectura de la humedad relativa
+    //HumedadSuelo(); // Metodo para la lectura de la humedad en suelo
+    MenuLecturaOpciones();
+   
 }
 
 void MenuPrincipal(){
@@ -83,6 +83,9 @@ void MenuPrincipal(){
 }
 
 void MenuLecturaOpciones(){
+  //Temperatura(); // Metodo para la lectura de la tempeartura
+  //HumedadRelativa(); // Metodo para la lectura de la humedad relativa
+  //HumedadSuelo(); // Metodo para la lectura de la humedad en 
   z = 0;
   key = keypad.getKey(); //se guarda en la variable key el caracter de la tecla presionada
   
@@ -129,9 +132,9 @@ void MenuModificarStnd(){
       lcd20x4.print("Temperatura (*C) ");
       lcd20x4.setCursor(0,1);
       lcd20x4.print("Limite inf:");
-      liTemp = lecturaLiTemperatura();
+      lecturaLiTemperatura();
       lcd20x4.print(" sup:");
-      lsTemp = lecturaLsTemperatura();
+      lecturaLsTemperatura();
       lcd20x4.setCursor(0,2);
       lcd20x4.print("[1] Modif Limite inf");
       lcd20x4.setCursor(0,3);
@@ -140,8 +143,6 @@ void MenuModificarStnd(){
       lsTemperatura[contlsTemp] = key;
       EEPROM.write(contliTemp, liTemperatura[contliTemp]);
       EEPROM.write(contlsTemp, lsTemperatura[contlsTemp]);
-      Serial.print(liTemperatura[contliTemp]);
-      Serial.print(lsTemperatura[contlsTemp]);
       contliTemp++;
       contlsTemp++;
       MenuNuevoEstandar(contliTemp, contlsTemp, liTemperatura[3], lsTemperatura[3]); // Metodo para capturar el nuevo valor 
@@ -153,9 +154,9 @@ void MenuModificarStnd(){
       lcd20x4.print("Humedad suelo (%)");
       lcd20x4.setCursor(0,1);
       lcd20x4.print("Limite inf:");
-      liHs = lecturaLiHsuelo();
+      lecturaLiHsuelo();
       lcd20x4.print(" sup:");
-      lsHs = lecturaLsHsuelo();
+      lecturaLsHsuelo();
       lcd20x4.setCursor(0,2);
       lcd20x4.print("[1] Modif Limite inf");
       lcd20x4.setCursor(0,3);
@@ -164,8 +165,6 @@ void MenuModificarStnd(){
       lsHsuelo[contlsHs] = key;
       EEPROM.write(contliHs, liHsuelo[contliHs]);
       EEPROM.write(contlsHs, lsHsuelo[contlsHs]);
-      Serial.print(liHsuelo[contliHs]);
-      Serial.print(lsHsuelo[contlsHs]);
       contliHs++;
       contlsHs++;
       MenuNuevoEstandar(contliHs, contlsHs, liHsuelo[3], lsHsuelo[3]); // Metodo para capturar el nuevo valor
@@ -177,9 +176,9 @@ void MenuModificarStnd(){
       lcd20x4.print("Humedad relativa (%)");
       lcd20x4.setCursor(0,1);
       lcd20x4.print("Limite inf:");
-      liHa = lecturaLiHaire();
+      lecturaLiHaire();
       lcd20x4.print(" sup:");
-      lsHa = lecturaLsHaire();
+      lecturaLsHaire();
       lcd20x4.setCursor(0,2);
       lcd20x4.print("[1] Modif Limite inf");
       lcd20x4.setCursor(0,3);
@@ -188,8 +187,6 @@ void MenuModificarStnd(){
       lsHaire[contlsHa] = key;
       EEPROM.write(contliHa, liHaire[contliHa]);
       EEPROM.write(contlsHa, lsHaire[contlsHa]);
-      Serial.print(liHaire[contliHa]);
-      Serial.print(lsHaire[contlsHa]);
       contliHa++;
       contlsHa++;
       MenuNuevoEstandar(contliHa, contlsHa, liHaire[3], lsHaire[3]);
@@ -211,7 +208,6 @@ void MenuNuevoEstandar(int contli, int contls, char linf[3], char lsup[3]){
     if(key == '1'){ //Nuevo Estandar para limite inferior
       linf[contli] = key;//se guarda caracter por caracter en el arreglo limite[]
       EEPROM.write(contli, linf[contli]);
-      Serial.print(linf[contli]);
       contli++;
       lcd20x4.clear();
       lcd20x4.setCursor(0,0);
@@ -222,7 +218,6 @@ void MenuNuevoEstandar(int contli, int contls, char linf[3], char lsup[3]){
     if(key == '2'){ //Nuevo Estandar para limite superior
       lsup[contls] = key; //se guarda caracter por caracter en el arreglo limite[]
       EEPROM.write(contls, lsup[contls]);
-      Serial.print(lsup[contls]);
       contls++;
       lcd20x4.clear();
       lcd20x4.setCursor(0,0);
@@ -242,7 +237,6 @@ void CapturarEstandar(int contlim, char limite[3]){
       if((key != 'A') and (key != 'B') and (key != 'C') and (key != 'D') and (key != '*' ) and (key != '#')){
         limite[contlim] = key; //se guarda caracter por caracter en el arreglo limite[]
         EEPROM.write(contlim, limite[contlim]);
-        Serial.print(limite[contlim]);
         lcd20x4.print(key);
         contlim++;
         i++;
@@ -406,52 +400,60 @@ void ModificarRiegoPorGoteo(bool estadoActuador){
 void ApagarRiegoPorGoteo(){
   digitalWrite(releGoteo, LOW);
   riegoGoteo = false;
-  lcd20x4.setCursor(0,1);
-  lcd20x4.print("Riego Apagado");
+  lcd16x2.setCursor(0,1);
+  lcd16x2.print("Riego Apagado");
+  
   //Registrando el apagado del riego por goteo
-  Serial.println("11");
-  Serial.println("0");
+  Serial.print("{\"Estado_riego\":");
+  Serial.print(riegoGoteo);
+  Serial.println("}\n");
 }
 
 void EncenderRiegoPorGoteo(){
   digitalWrite(releGoteo, HIGH);
   riegoGoteo = true;
-  lcd20x4.setCursor(0,1);
-  lcd20x4.println("Riego Encendido");
+  lcd16x2.setCursor(0,1);
+  lcd16x2.print("Riego Encendido");
+  
   //Registrando la activación del riego por goteo
-  Serial.println("11");
-  Serial.println("1");
+  Serial.print("{\"Estado_riego\":");
+  Serial.print(riegoGoteo);
+  Serial.println("}\n");
 }
 
 void ApagarRociador(){
   digitalWrite(releRocio, LOW);
   rociador = false;
-  lcd20x4.setCursor(0,1);
-  lcd20x4.print("Rociador Apagado");
+  lcd16x2.setCursor(0,1);
+  lcd16x2.print("Rociador Apagado");
+  
   //Registrando el apagado del rociador
-  Serial.println("10");;
-  Serial.println("0");
+  Serial.print("{\"Estado rociador\":");
+  Serial.print(rociador);
+  Serial.println("}\n");
 }
 
 void EncenderRociador(){
   digitalWrite(releRocio, HIGH);
   rociador = true;
-  lcd20x4.setCursor(0,1);
-  lcd20x4.print("Rociador Encendido");
+  lcd16x2.setCursor(0,1);
+  lcd16x2.print("Rociador Encendido");
+  
   //Registrando la activación del rociador
-  Serial.println("10");
-  Serial.println("1");
+  Serial.print("{\"Estado rociador\":");
+  Serial.print(rociador);
+  Serial.println("}\n");
 }
 
 void Temperatura(){
   t = dht.readTemperature(); // Leemos la temperatura en grados centígrados (por defecto)
   
   //Validando lecturas de Temperatura
-  if (isnan(t)) {
+  /*if (isnan(t)) {
     //Cuando haya un error, enviará un cero por el puerto serial, esto evitará que python capture datos inválidos
     Serial.println("0");
     Serial.println("Error obteniendo los datos de la Temperatura 'sensor DHT11'");
-  }
+  }*/
   lcd16x2.clear();
   lcd16x2.setCursor(0,0);
   lcd16x2.print("Temp: ");
@@ -459,9 +461,10 @@ void Temperatura(){
   lcd16x2.print(" *C");
 
   //Enviando la temperatura por el puerto Serial
-  Serial.println("1");
-  Serial.println(t);
-  //delay(1000);
+  Serial.print("{\"Temp\": ");
+  Serial.print(t);
+  Serial.println("}\n");
+  delay(1000);
 }
 
 void HumedadSuelo(){
@@ -478,10 +481,11 @@ void HumedadSuelo(){
   lcd16x2.print(valT);
 
   //Enviando la humedad del suelo por el puerto serial
-  Serial.println("2");
-  Serial.println(valT);
+  Serial.print("{\"Hs\": ");
+  Serial.print(valT);
+  Serial.println("}\n");
       
-  if((valT >= 0) and (valT <= liHs)) {
+  if((valT >= 0) and (valT <= liHs)) { 
     lcd16x2.setCursor(0,1);
     lcd16x2.print("Suelo seco");
     delay(1000);
@@ -500,25 +504,27 @@ void HumedadSuelo(){
   delay(1000);
 }
 
-void HumedadRelativa(){
+char HumedadRelativa(){
   h = dht.readHumidity(); // Leemos la humedad relativa
   liHa = lecturaLiHaire();
   lsHa = lecturaLsHaire();
   
   //Validando lecturas de Humedad Relativa
-  if (isnan(h)) {
+  /*if (isnan(h)) {
     Serial.println("0");
     Serial.println("Error obteniendo los datos de la humedad relativa 'sensor DHT11'");
-  }
+  }*/
   //Desplegando datos en pantalla
+  lcd16x2.clear();
   lcd16x2.setCursor(0,0);
   lcd16x2.print("HA: ");
   lcd16x2.print(h);
   lcd16x2.print(" %");
 
   //Enviando la humedad del aire por el puerto serial
-  Serial.println("3");
-  Serial.println(h);
+  Serial.print("{\"Ha\": ");
+  Serial.print(h);
+  Serial.println("}\n");
   
   if(h<liHa){
       EncenderRociador();
@@ -528,86 +534,83 @@ void HumedadRelativa(){
       ApagarRociador();
       delay(1000);
     }
-  //delay(1000);
+  delay(1000);
 }
 
 char lecturaLiTemperatura(){
   char liTemperatura[3];
   int contliTemp;
-  Serial.println("\n***Estandar Temp***");
-  Serial.println("Limite inferior: ");
-  Serial.println("6");
+  Serial.print("{\"LiTemp\": ");
   for(contliTemp=2; contliTemp<=sizeof(liTemperatura); contliTemp++){
     liTemperatura[contliTemp] = char(EEPROM.read(contliTemp));
     lcd20x4.print(liTemperatura[contliTemp]);
     Serial.print(liTemperatura[contliTemp]);
   }
+  Serial.println("}\n");
+  delay(100);
 }
 
 char lecturaLsTemperatura(){
   char lsTemperatura[7];
   int contlsTemp;
-  Serial.println("\n***Estandar Temp***");
-  Serial.println("Limite superior: ");
-  Serial.println("7");
+  Serial.print("{\"LsTemp\": ");
   for(contlsTemp=6; contlsTemp<=sizeof(lsTemperatura); contlsTemp++){
     lsTemperatura[contlsTemp] = char(EEPROM.read(contlsTemp));
     lcd20x4.print(lsTemperatura[contlsTemp]);
     Serial.print(lsTemperatura[contlsTemp]);
   }
-  Serial.print("\n");
+  Serial.println("}\n");
+  delay(100);
 }
 
 char lecturaLiHsuelo(){
   char liHsuelo[11];
   int contliHs;  
-  Serial.println("\n***Estandar Hs***");
-  Serial.println("Limite inferior: ");
-  Serial.println("4");
+  Serial.print("{\"LiHs\": ");
   for(contliHs=10; contliHs<=sizeof(liHsuelo); contliHs++){
     liHsuelo[contliHs] = char(EEPROM.read(contliHs));
     lcd20x4.print(liHsuelo[contliHs]);
     Serial.print(liHsuelo[contliHs]);
   }
+  Serial.println("}\n");
+  delay(100);
 }
 
 char lecturaLsHsuelo(){
   char lsHsuelo[15];
-  int contlsHs;  
-  Serial.println("\n***Estandar Hs***");
-  Serial.println("Limite superior: ");
-  Serial.println("5");
+  int contlsHs;
+  Serial.print("{\"LsHs\": ");
   for(contlsHs=14; contlsHs<=sizeof(lsHsuelo); contlsHs++){
     lsHsuelo[contlsHs] = char(EEPROM.read(contlsHs));
     lcd20x4.print(lsHsuelo[contlsHs]);
     Serial.print(lsHsuelo[contlsHs]);
   }
-  Serial.print("\n");
+  Serial.println("}\n");
+  delay(100);
 }
 
 char lecturaLiHaire(){
   char liHaire[19];
   int contliHa;  
-  Serial.println("\n***Estandar Ha***");
-  Serial.println("Limite inferior: ");
-  Serial.println("8");
+  Serial.print("{\"LiHa\": ");
   for(contliHa=18; contliHa<=sizeof(liHaire); contliHa++){
     liHaire[contliHa] = char(EEPROM.read(contliHa));
     lcd20x4.print(liHaire[contliHa]);
     Serial.print(liHaire[contliHa]);
   }
+  Serial.println("}\n");
+  delay(100);
 }
 
 char lecturaLsHaire(){
   char lsHaire[23];
   int contlsHa;
-  Serial.println("\n***Estandar Ha***");
-  Serial.println("Limite superior: ");
-  Serial.println("9");
+  Serial.print("{\"LsHa\": ");
   for(contlsHa=22; contlsHa<=sizeof(lsHaire); contlsHa++){
     lsHaire[contlsHa] = char(EEPROM.read(contlsHa));
     lcd20x4.print(lsHaire[contlsHa]);
     Serial.print(lsHaire[contlsHa]);
   }
-  Serial.print("\n");
+  Serial.println("}\n");
+  delay(100);
 }

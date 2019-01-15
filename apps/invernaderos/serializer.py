@@ -45,7 +45,8 @@ class ParametroSerializer(serializers.ModelSerializer):
             'id_parametro',
             'id_invernadero',
             'nombre_parametro',
-            'magnitud_referencia'
+            'magnitud_referencia_limite_inferior',
+            'magnitud_referencia_limite_superior'
         )
 
 

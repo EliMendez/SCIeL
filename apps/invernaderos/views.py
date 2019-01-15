@@ -206,8 +206,8 @@ class ParametroUpdateView(LoginRequiredMixin, UpdateView):
     fields = [
         'id_invernadero',
         'nombre_parametro',
-        'magnitud_referencia'
-    ]
+        'magnitud_referencia_limite_inferior',
+        'magnitud_referencia_limite_superior'    ]
 
 
 class ActuadorUpdateView(LoginRequiredMixin, UpdateView):
@@ -285,7 +285,8 @@ class ParametroDetailView(LoginRequiredMixin, DetailView):
         'id_parametro',
         'id_invernadero',
         'nombre_parametro',
-        'magnitud_referencia'
+        'magnitud_referencia_limite_inferior',
+        'magnitud_referencia_limite_superior'
     ]
 
 
@@ -356,7 +357,8 @@ class ParametroCreateView(LoginRequiredMixin, CreateView):
     fields = [
         'id_invernadero',
         'nombre_parametro',
-        'magnitud_referencia'
+        'magnitud_referencialimite_inferior',
+        'magnitud_referencia_limite_superior'
     ]
 
 
