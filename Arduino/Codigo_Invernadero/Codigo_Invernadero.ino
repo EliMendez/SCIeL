@@ -663,7 +663,8 @@ char LecturaLsHa_LCD(){
 }
 
 void sendData(MEDICION med){
-  Serial.print("{\"invernadero\": ");
+  Serial.println("1");
+  Serial.println("{\"invernadero\": ");
   Serial.print(med.invernadero);
   Serial.print(",");
   Serial.print("\"parametro\": ");
@@ -680,6 +681,19 @@ void sendData(MEDICION med){
   Serial.print(",");
   Serial.print("\"estado\": ");
   Serial.print(med.estado);
+  Serial.println("}\n");
+}
+
+void sendModificacion(int id, float li, float ls){
+  Serial.println("2");
+  Serial.println("{\"id:\": ");
+  Serial.print(id);
+  Serial.print(",");
+  Serial.print("\"li:\": ");
+  Serial.print(li);
+  Serial.print(",");
+  Serial.print("\"ls:\": ");
+  Serial.print(ls);
   Serial.println("}\n");
 }
 
