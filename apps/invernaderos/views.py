@@ -487,13 +487,13 @@ def get_data(id_invernadero):
 
     for parametro in parametros:
         if parametro.nombre_parametro.upper() == 'HUMEDAD DEL AIRE':
-            humedades_relativas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            humedades_relativas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)[:20]
             data['humedades_relativas'] = humedades_relativas
         elif parametro.nombre_parametro.upper() == 'HUMEDAD DEL SUELO':
-            humedades_suelo = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            humedades_suelo = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)[:20]
             data['humedades_suelo'] = humedades_suelo
         elif parametro.nombre_parametro.upper() == 'TEMPERATURA':
-            temperaturas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)
+            temperaturas = Medicion.objects.all().filter(id_invernadero=id_invernadero).filter(id_parametro = parametro.id_parametro)[:20]
             data['temperaturas'] = temperaturas
     return data
 
