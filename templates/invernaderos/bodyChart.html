@@ -65,7 +65,11 @@
                         <td class="text-center">{{ humedad_relativa.magnitud_medicion }}</td>
                         <td class="text-center">{{ humedad_relativa.fecha_medicion|date:"d/m/y" }}</td>
                         <td class="text-center">{{ humedad_relativa.fecha_medicion|date:"h:i:s A" }}</td>
-                        <td class="text-center">{{ humedad_relativa.is_activo }}</td>
+                        {% if humedad_relativa.is_activo %}
+                          <td class="text-center">Activo</td>
+                        {% else %}
+                          <td class="text-center">Inactivo</td>
+                        {% endif %}
                       </tr>
                     {% endfor %}
                   </tbody>
@@ -107,7 +111,11 @@
                         <td class="text-center">{{ temperatura.magnitud_medicion }}</td>
                         <td class="text-center">{{ temperatura.fecha_medicion|date:"d/m/y" }}</td>
                         <td class="text-center">{{ temperatura.fecha_medicion|date:"h:i:s A" }}</td>
-                        <td class="text-center">{{ temperatura.is_activo }}</td>
+                        {% if temperatura.is_activo %}
+                          <td class="text-center">Activo</td>
+                        {% else %}
+                          <td class="text-center">Inactivo</td>
+                        {% endif %}
                       </tr>
                     {% endfor %}
                   </tbody>
@@ -149,7 +157,11 @@
                         <td class="text-center">{{ humedad_suelo.magnitud_medicion }}</td>
                         <td class="text-center">{{ humedad_suelo.fecha_medicion|date:"d/m/y" }}</td>
                         <td class="text-center">{{ humedad_suelo.fecha_medicion|date:"h:i:s A" }}</td>
-                        <td class="text-center">{{ humedad_suelo.is_activo }}</td>
+                        {% if humedad_suelo.is_activo %}
+                          <td class="text-center">Activo</td>
+                        {% else %}
+                          <td class="text-center">Inactivo</td>
+                        {% endif %}
                       </tr>
                     {% endfor %}
                   </tbody>
