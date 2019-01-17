@@ -181,16 +181,7 @@
       var data3 = []
       
       window.onload=function(){
-        /*data = {{ suelo_magnitud }};
-        console.log({{ suelo_fecha }});
-        lbl = {{ suelo_fecha }};
-        loadChart("humedadSueloChart", data, lbl)
-        data = {{ relativas_magnitud }};
-        lbl = {{ relativas_fecha }};
-        loadChart("humedadAireChart", data, lbl)
-        data = {{ temp_magnitud }};
-        lbl = {{ temp_fecha }};
-        loadChart("temperaturaChart", data, lbl)*/
+        loadData();
       }
 
       function loadChart(idCanvas, data, lbl){
@@ -221,7 +212,7 @@
                       unit: 'date'
                     },
                     gridLines: {
-                      display: false
+                      display: true
                     },
                     ticks: {
                       maxTicksLimit: 7
@@ -238,13 +229,40 @@
                   }],
                 },
                 legend: {
-                  display: false
+                  display: true
                 }
               }
           })
         }
 
-      setInterval(function (){
+      setInterval(function(){
+          console.log("Iniciando");
+          $.ajax({
+            url: "{% url 'invernaderos:ajax-datos' %}",
+            type: 'GET',
+            data: {
+              'id_invernadero': {{ id_invernadero }}
+            },
+            success: function(data){
+              console.log(data);
+              console.log("SUCCES");
+            },
+            dataType: 'json'
+          }).done(function(data) {
+            loadChart("humedadAireChart", data.relativas_magnitud, data.relativas_fecha);
+            loadChart("humedadSueloChart", data.suelo_magnitud, data.suelo_fecha);
+            loadChart("temperaturaChart", data.temp_magnitud, data.temp_fecha);
+            $(".data").empty();
+            $(".data").append(data.fecha+9)
+          }).fail(function() {
+            console.log("error");
+          }).always(function() {
+            console.log("complete");
+          });
+          console.log("Terminando");
+        }, 5000);
+
+      function loadData(){
         console.log("Iniciando");
         $.ajax({
           url: "{% url 'invernaderos:ajax-datos' %}",
@@ -269,7 +287,7 @@
           console.log("complete");
         });
         console.log("Terminando");
-      }, 5000);
+      };
       
     </script>
 {% endblock content %}
