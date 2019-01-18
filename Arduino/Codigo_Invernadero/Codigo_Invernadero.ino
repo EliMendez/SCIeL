@@ -3,16 +3,14 @@
 #include <DHT.h> //Incluimos librería para sensor DHT 
 #include <LiquidCrystal_I2C.h> //libreria necesaria para display I2C
 #include <EEPROM.h> // Controla E/S EEPROM
+#include <Servo.h> //Librería necesaria para el servo motor
 
-#define DHTPIN 10 //Definimos el pin digital donde se conecta el sensor
+#define DHTPIN 12 //Definimos el pin digital donde se conecta el sensor
 #define DHTTYPE DHT11 //Dependiendo del tipo de sensor
 
 //Declaración de variables locales
 struct MEDICION{
-  int invernadero;
-  int parametro;
-  int sensor;
-  int actuador;
+  int invernadero, parametro, sensor, actuador;
   float medicion;
   bool estado;
 } toma_medicion;
@@ -23,12 +21,12 @@ MEDICION humedadRelativa;
 MEDICION humedadSuelo;
 
 const int sensorPinT = A0;
-const int releGoteo = 11;
-const int releRocio = 12;
+const int releGoteo = 10;
+const int releRocio = 11;
 const byte ROWS = 4;
 const byte COLS = 4;
-bool riegoGoteo = false, rociador = false, estadoActuador;
-int i, u, w, x, y, z, t, h, valT, cont, contliTemp, contlsTemp, contliHa, contliHs, contlsHa, contlsHs;
+bool riegoGoteo, rociador, estadoRiego, estadoRociador;
+int i, x, y, z, t, h, valT, cont,contliTemp, contlsTemp, contliHa, contliHs, contlsHa, contlsHs, liTempe= 20, lsTempe=42, liHsu=66, lsHsu=70, liHai=50, lsHai=60;
 char key, liHs, lsHs, liTemp, lsTemp, liHa, lsHa;
 char liTemperatura[3], lsTemperatura[7], liHsuelo[11], lsHsuelo[15], liHaire[19], lsHaire[23]; //almacena los caracteres en EEPROM
 char keys[ROWS][COLS] = {
@@ -60,15 +58,23 @@ void setup(){
   humedadSuelo.actuador = 2; //Riego por Goteo
   humedadSuelo.parametro = 3;  //Humedad del Suelo
 
+  liTemp = LimiteInferiorTemp();
+  lsTemp = LimiteSuperiorTemp();
+  liHs = LimiteInferiorHs();
+  lsHs = LimiteSuperiorHs();
+  liHa = LimiteInferiorHa();
+  lsHa = LimiteSuperiorHa();
+
   Serial.begin(9600);
   Wire.begin(); // Unimos este dispositivo al bus I2C
   dht.begin();
+  pinMode(releRocio, OUTPUT);
+  pinMode(releGoteo, OUTPUT);
 
   lcd16x2.init(); // initializa el lcd 16x2
   lcd20x4.init(); // initializa el lcd 20x4
   lcd16x2.backlight(); // enciende la luz de fondo del display
   lcd20x4.backlight(); // enciende la luz de fondo del display
-  
   Lecturas();
   MenuPrincipal();
 }
@@ -125,7 +131,6 @@ void MenuLecturaOpciones(){
 void MenuModificarStnd(){
   y = 0, contliTemp = 0, contlsTemp = 4, contliHs = 8, contlsHs = 12, contliHa = 16, contlsHa = 20;
   Lecturas();
-  
   while(z<1){
     key = keypad.getKey(); //Leyendo Keypad
     delay(100);
@@ -273,7 +278,6 @@ char GuardarValor(){
       x++;
     }
   }
-  Lecturas();
   MenuPrincipal();
   MenuLecturaOpciones();
   y++;
@@ -283,21 +287,20 @@ char GuardarValor(){
 // Caso B del Menu Principal
 void MenuActivarActuador(bool riegoGoteo, bool rociador){
   y = 0;
-  Lecturas();
   while(z<1){
     key = keypad.getKey(); //Leyendo Keypad
     delay(100);
     if(key == '1'){ // Riego por goteo
-      if(riegoGoteo){ // Condicion si el riego por goteo está apagado
+      if(riegoGoteo == false){ // Condicion si el riego por goteo está apagado
         lcd20x4.clear();
         lcd20x4.setCursor(0,0);
         lcd20x4.print("Estado actual:");
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Riego Apagado");
-        estadoActuador = false;
         lcd20x4.setCursor(0,2);
         lcd20x4.print("[1] Modificar Estado");
-        ModificarRiegoPorGoteo(estadoActuador);
+        ModificarRiegoPorGoteo(riegoGoteo);
+        delay(1500);
         y++;
       }
       else{ // Condicion si el riego por goteo está encendido
@@ -306,24 +309,24 @@ void MenuActivarActuador(bool riegoGoteo, bool rociador){
         lcd20x4.print("Estado actual:");
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Riego Encendido");
-        estadoActuador = true;
         lcd20x4.setCursor(0,2);
         lcd20x4.print("[1] Modificar Estado");
-        ModificarRiegoPorGoteo(estadoActuador);
+        ModificarRiegoPorGoteo(riegoGoteo);
+        delay(1500);
         y++;
       }
     }
     if(key == '2'){ // Rociador
-      if(rociador){ // Condicion si el rociador está apagado
+      if(rociador == false){ // Condicion si el rociador está apagado
         lcd20x4.clear();
         lcd20x4.setCursor(0,0);
         lcd20x4.print("Estado actual:");
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Rociador Apagado");
-        estadoActuador = false;
         lcd20x4.setCursor(0,2);
         lcd20x4.print("[1] Modificar Estado");
-        ModificarRociador(estadoActuador);
+        ModificarRociador(rociador);
+        delay(1500);
         y++;
       }
       else{ // Condicion si el rociador está encendido
@@ -332,10 +335,10 @@ void MenuActivarActuador(bool riegoGoteo, bool rociador){
         lcd20x4.print("Estado actual:");
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Rociador Encendido");
-        estadoActuador = true;
         lcd20x4.setCursor(0,2);
         lcd20x4.print("[1] Modificar Estado");
-        ModificarRociador(estadoActuador);
+        ModificarRociador(rociador);
+        delay(1500);
         y++;
       }
     }
@@ -357,23 +360,27 @@ void ModificarRociador(bool estadoActuador){
         lcd20x4.clear();
         lcd20x4.setCursor(0,0);
         lcd20x4.print("Nuevo Estado:");
-        ApagarRociador(); // Metodo para apagar rociador
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Rociador Apagado");
+        ApagarRociador(); // Metodo para apagar rociador
+        delay(500);
+        digitalWrite(releRocio, HIGH);
         x++;
       }
       else{ // Condicion si el estado del actuador está apagado (rociador)
         lcd20x4.clear();
         lcd20x4.setCursor(0,0);
         lcd20x4.print("Nuevo Estado:");
-        EncenderRociador(); // Metodo para encender rociador
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Rociador Encendido");
+        EncenderRociador(); // Metodo para encender rociador
+        delay(500);
+        digitalWrite(releRocio, LOW);
         x++;
       }
+      y++;
     }
   }
-  Lecturas();
   MenuPrincipal();
   MenuLecturaOpciones();
   rociador = estadoActuador;
@@ -381,6 +388,7 @@ void ModificarRociador(bool estadoActuador){
 }
 
 void ModificarRiegoPorGoteo(bool estadoActuador){
+  x=0;
   while(y<1){
     key = keypad.getKey();
     delay(100);
@@ -389,43 +397,51 @@ void ModificarRiegoPorGoteo(bool estadoActuador){
         lcd20x4.clear();
         lcd20x4.setCursor(0,0);
         lcd20x4.print("Nuevo Estado:");
-        ApagarRiegoPorGoteo(); // Metodo para apagar el riego por goteo
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Riego Apagado");
+        ApagarRiegoPorGoteo(); // Metodo para apagar el riego por goteo
+        delay(500);
+        digitalWrite(releGoteo, HIGH);
         x++;
       }
       else{ //Condicion si el estado del actuador está apagado (riego por goteo)
         lcd20x4.clear();
         lcd20x4.setCursor(0,0);
         lcd20x4.print("Nuevo Estado:");
-        EncenderRiegoPorGoteo(); // Metodo para encender el riego por goteo
         lcd20x4.setCursor(0,1);
         lcd20x4.print("Riego Encendido");
+        EncenderRiegoPorGoteo(); // Metodo para encender el riego por goteo
+        delay(500);
+        digitalWrite(releGoteo, LOW);
         x++;
       }
+      y++;
     }
   }
-  Lecturas();
+  
   MenuPrincipal();
-  MenuLecturaOpciones();
+  MenuLecturaOpciones();  
   riegoGoteo = estadoActuador;
   z++;
 }
 
 void ApagarRiegoPorGoteo(){
   digitalWrite(releGoteo, LOW);
+  delay(3000);
   riegoGoteo = false;
   humedadSuelo.estado = riegoGoteo; //Registrando el cambio de estado
 }
 
 void EncenderRiegoPorGoteo(){
   digitalWrite(releGoteo, HIGH);
+  delay(3000);
   riegoGoteo = true;
   humedadSuelo.estado = riegoGoteo; //Registrando el cambio de estado
 }
 
 void ApagarRociador(){
   digitalWrite(releRocio, LOW);
+  delay(3000);
   rociador = false;
   temperatura.estado = rociador; //Registrando el cambio de estado
   humedadRelativa.estado = rociador; //Registrando el cambio de estado
@@ -433,81 +449,45 @@ void ApagarRociador(){
 
 void EncenderRociador(){
   digitalWrite(releRocio, HIGH);
+  delay(3000);
   rociador = true;
   temperatura.estado = rociador; //Registrando el cambio de estado
   humedadRelativa.estado = rociador; //Registrando el cambio de estado
 }
 
 char LimiteInferiorTemp(){
-  char liTemperatura[3];
-  int cont;
-  Serial.print("{\"LiTemp\": ");
   for(cont=2; cont<=sizeof(liTemperatura); cont++){
     liTemperatura[cont] = char(EEPROM.read(cont));
-    Serial.print(liTemperatura[cont]);
   }
-  Serial.println("}\n");
 }
-
 char LimiteSuperiorTemp(){
-  char lsTemperatura[7];
-  int cont;
-  Serial.print("{\"LsTemp\": ");
   for(cont=6; cont<=sizeof(lsTemperatura); cont++){
     lsTemperatura[cont] = char(EEPROM.read(cont));
-    Serial.print(lsTemperatura[cont]);
   }
-  Serial.println("}\n");
 }
-
 char LimiteInferiorHs(){
-  char liHsuelo[11];
-  int cont;  
-  Serial.print("{\"LiHs\": ");
   for(cont=10; cont<=sizeof(liHsuelo); cont++){
     liHsuelo[cont] = char(EEPROM.read(cont));
-    Serial.print(liHsuelo[cont]);
   }
-  Serial.println("}\n");
 }
-
 char LimiteSuperiorHs(){
-  char lsHsuelo[15];
-  int cont;
-  Serial.print("LsHs: ");
   for(cont=14; cont<=sizeof(lsHsuelo); cont++){
     lsHsuelo[cont] = char(EEPROM.read(cont));
-    Serial.print(lsHsuelo[cont]);
   }
-  Serial.println("}\n");
 }
-
 char LimiteInferiorHa(){
-  char liHaire[19];
-  int cont; 
-  Serial.print("{\"LiHa\": "); 
   for(cont=18; cont<=sizeof(liHaire); cont++){
     liHaire[cont] = char(EEPROM.read(cont));
-    Serial.print(liHaire[cont]);
   }
-  Serial.println("}\n");
 }
-
 char LimiteSuperiorHa(){
-  char lsHaire[23];
-  int cont;
-  Serial.print("{\"LsHa\": ");
   for(cont=22; cont<=sizeof(lsHaire); cont++){
     lsHaire[cont] = char(EEPROM.read(cont));
-    Serial.print(lsHaire[cont]);
   }
-  Serial.println("}\n");
 }
 
 void Temperatura(){
   t = dht.readTemperature(); // Leemos la temperatura en grados centígrados (por defecto)
-  liTemp = LimiteInferiorTemp();
-  lsTemp = LimiteSuperiorTemp();
   temperatura.medicion = t; //Registrando la lectura
   
   //Validando lecturas de Temperatura
@@ -521,28 +501,13 @@ void Temperatura(){
   lcd16x2.print("T:");
   lcd16x2.print(t);
 
-  if(h<liTemp){
-    EncenderRociador();
-    temperatura.estado = true; //Registrando el estado
-    lcd16x2.setCursor(0,1);
-    lcd16x2.print("Rociador Encendido");
-    delay(500);
-  }
-  if(h>lsTemp){
-    ApagarRociador();
-    temperatura.estado = false; //Registrando el estado
-    lcd16x2.setCursor(0,1);
-    lcd16x2.print("Rociador Apagado");
-    delay(500);
-  }
-  delay(800);
+  delay(900);
 }
 
 void HumedadRelativa(){
   h = dht.readHumidity(); // Leemos la humedad relativa
-  liHa = LimiteInferiorHa();
-  lsHa = LimiteSuperiorHa();
   humedadRelativa.medicion = h; //Registrando lectura
+  
   //Validando lecturas de Humedad Relativa
   if (isnan(h)) {
     lcd16x2.clear();
@@ -554,28 +519,27 @@ void HumedadRelativa(){
   lcd16x2.print("HA:");
   lcd16x2.print(h);
     
-  if(h<liHa){
-    EncenderRociador();
-    humedadRelativa.estado = true; //Registrando el estado
+  if(h<liHai){
     lcd16x2.setCursor(0,1);
     lcd16x2.print("Rociador Encendido");
+    humedadRelativa.estado = true;
+    EncenderRociador();
     delay(500);
+  }else{
+    if(h>lsHai){
+      lcd16x2.setCursor(0,1);
+      lcd16x2.print("Rociador Apagado");
+      humedadRelativa.estado = false; //Registrando el estado
+      ApagarRociador();
+      delay(500);
+    }  
   }
-  if(h>lsHa){
-    ApagarRociador();
-    humedadRelativa.estado = false; //Registrando el estado
-    lcd16x2.setCursor(0,1);
-    lcd16x2.print("Rociador Apagado");
-    delay(500);
-  }  
-  delay(800);
+  delay(900);
 }
 
 void HumedadSuelo(){
   valT = map(analogRead(sensorPinT), 0, 1023, 100, 0); //Trunca un valor del rango de (1023, 0) ajustandolo a los porcentajes de (0 y 100) (Humedad en suelo)
   valT = constrain(valT, 0, 100); //Restringe un número a estar dentro del porcentaje de 0 y 100
-  liHs = LimiteInferiorHs();
-  lsHs = LimiteSuperiorHs();
   humedadSuelo.medicion = valT; //Registrando la lectura
   
   //Desplegando datos de la Humedad en el suelo
@@ -583,79 +547,66 @@ void HumedadSuelo(){
   lcd16x2.print("HS:");
   lcd16x2.print(valT);
       
-  if((valT >= 0) and (valT <= liHs)) { 
+  if((valT >= 0) and (valT <= liHsu)) { 
     lcd16x2.setCursor(0,1);
     lcd16x2.print("Suelo seco      ");
     delay(900);
-    humedadSuelo.estado = true; //Registrando el estado
-    EncenderRiegoPorGoteo();
     lcd16x2.setCursor(0,1);
     lcd16x2.print("Riego Encendido");
+    humedadSuelo.estado = true; //Registrando el estado
+    EncenderRiegoPorGoteo();
+    delay(500);
   }else{ 
-    if((valT > liHs) and (valT <= lsHs)) {
-      lcd16x2.setCursor(0,1);
-      lcd16x2.print("Suelo humedo    ");
-    }else{
-      lcd16x2.setCursor(0,1);
-      lcd16x2.print("Suelo mojado    ");
-      delay(1000);
-      humedadSuelo.estado = false; //Registrando el estado
-      ApagarRiegoPorGoteo();
-      lcd16x2.setCursor(0,1);
-      lcd16x2.print("Riego Apagado");
+      if(valT > lsHsu){
+        lcd16x2.setCursor(0,1);
+        lcd16x2.print("Suelo mojado    ");
+        delay(900);
+        lcd16x2.setCursor(0,1);
+        lcd16x2.print("Riego Apagado");
+        humedadSuelo.estado = false; //Registrando el estado
+        ApagarRiegoPorGoteo();
+        delay(500);
+      }else{
+        if((valT > liHsu) and (valT <= lsHsu)) {
+          lcd16x2.setCursor(0,1);
+          lcd16x2.print("Suelo humedo    ");
+        }
+      }
     }
-  }
   delay(1000);
 }
 
 char LecturaLiTemp_LCD(){
-  char liTemperatura[3];
-  int cont;
   for(cont=2; cont<=sizeof(liTemperatura); cont++){
     liTemperatura[cont] = char(EEPROM.read(cont));
     lcd20x4.print(liTemperatura[cont]);
   }
 }
-
 char LecturaLsTemp_LCD(){
-  char lsTemperatura[7];
-  int cont;
   for(cont=6; cont<=sizeof(lsTemperatura); cont++){
     lsTemperatura[cont] = char(EEPROM.read(cont));
     lcd20x4.print(lsTemperatura[cont]);
   }
 }
-
 char LecturaLiHs_LCD(){
-  char liHsuelo[11];
-  int cont;  
   for(cont=10; cont<=sizeof(liHsuelo); cont++){
     liHsuelo[cont] = char(EEPROM.read(cont));
     lcd20x4.print(liHsuelo[cont]);
   }
 }
-
 char LecturaLsHs_LCD(){
-  char lsHsuelo[15];
-  int cont;
   for(cont=14; cont<=sizeof(lsHsuelo); cont++){
     lsHsuelo[cont] = char(EEPROM.read(cont));
     lcd20x4.print(lsHsuelo[cont]);
   }
 }
-
 char LecturaLiHa_LCD(){
-  char liHaire[19];
-  int cont;  
-  for(cont=18; contliHa<=sizeof(liHaire); cont++){
+  for(cont=18; cont<=sizeof(liHaire); cont++){
     liHaire[cont] = char(EEPROM.read(cont));
     lcd20x4.print(liHaire[cont]);
   }
 }
-
 char LecturaLsHa_LCD(){
-  char lsHaire[23];
-  int cont;
   for(cont=22; cont<=sizeof(lsHaire); cont++){
     lsHaire[cont] = char(EEPROM.read(cont));
     lcd20x4.print(lsHaire[cont]);
@@ -663,8 +614,7 @@ char LecturaLsHa_LCD(){
 }
 
 void sendData(MEDICION med){
-  Serial.println("1");
-  Serial.println("{\"invernadero\": ");
+  Serial.print("{\"invernadero\": ");
   Serial.print(med.invernadero);
   Serial.print(",");
   Serial.print("\"parametro\": ");
@@ -681,19 +631,6 @@ void sendData(MEDICION med){
   Serial.print(",");
   Serial.print("\"estado\": ");
   Serial.print(med.estado);
-  Serial.println("}\n");
-}
-
-void sendModificacion(int id, float li, float ls){
-  Serial.println("2");
-  Serial.println("{\"id:\": ");
-  Serial.print(id);
-  Serial.print(",");
-  Serial.print("\"li:\": ");
-  Serial.print(li);
-  Serial.print(",");
-  Serial.print("\"ls:\": ");
-  Serial.print(ls);
   Serial.println("}\n");
 }
 
