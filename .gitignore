@@ -9,6 +9,9 @@ __pycache__/
 # SQLite databases
 *.sqlite3
 
+# Migrations files
+migrations/
+
 # Distribution / packaging
 .Python
 build/
