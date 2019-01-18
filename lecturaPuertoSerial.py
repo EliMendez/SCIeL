@@ -1,7 +1,18 @@
 import serial # Importamos la libreira de PySerial
 import json
 import sqlite3
-arduino = serial.Serial('COM7', 9600, timeout=1) # Abrimos el puerto del arduino a 9600 
+
+for i in range(0,10):
+	try:
+		conexion = serial.Serial('COM'+str(i), 9600, timeout=1)
+		puerto = 'COM'+str(i)
+		conexion.close()
+		s.close()
+	except serial.SerialException:
+		print(serial.SerialException)
+
+
+arduino = serial.Serial(puerto, 9600, timeout=1) # Abrimos el puerto del arduino a 9600 
 
 # Creamos un buble sin fin
 while True:
