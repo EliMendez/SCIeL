@@ -37,7 +37,7 @@ while True:
 				+str(data['actuador'])
 				+', '
 				+str(data['medicion'])
-				+', datetime(), '
+				+', datetime("now"), '
 				+str(data['estado'])
 				+')')
 			curs.execute(
