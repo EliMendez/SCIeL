@@ -38,7 +38,7 @@
                         if (selected.length > 0) {
                             selected += "+";
                         }
-                        selected += selectedValue;
+                       selected += selectedValue;
                     }
                 });
 
